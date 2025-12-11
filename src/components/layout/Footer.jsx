@@ -7,9 +7,9 @@ const Footer = () => {
     <footer className="bg-gradient-to-r from-black to-purple-900 text-white mt-10 shadow-inner">
       <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
         {/* Logo & Description */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-2xl flex items-center gap-2">
+            <span className="font-bold text-2xl flex items-center">
               <img
                 className="w-10 h-10"
                 src="https://img.icons8.com/?size=100&id=id6NGxHkL3QA&format=png&color=000000"
