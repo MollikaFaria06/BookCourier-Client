@@ -8,14 +8,12 @@ const Navbar = () => {
   const { user, logOut } = useAuth();
   const [theme, setTheme] = useState("light");
 
-  // Load saved theme on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.documentElement.classList.add(savedTheme);
   }, []);
 
-  // Toggle theme
   const handleThemeToggle = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     document.documentElement.classList.remove("light", "dark");
@@ -24,9 +22,7 @@ const Navbar = () => {
     localStorage.setItem("theme", newTheme);
   };
 
-  const handleLogOut = () => {
-    logOut().catch(console.error);
-  };
+  const handleLogOut = () => logOut().catch(console.error);
 
   const links = (
     <>
@@ -58,8 +54,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
         {/* Navbar Start */}
         <div className="flex items-center gap-4">
-          <div className="dropdown">
-            <label tabIndex={0} className="btn btn-ghost lg:hidden text-white">
+          {/* Mobile/Tablet dropdown */}
+          <div className="dropdown lg:hidden">
+            <label tabIndex={0} className="btn btn-ghost text-white">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -70,31 +67,61 @@ const Navbar = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </label>
-            <ul className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-black/80 rounded-box w-52 text-white">
+            <ul
+              tabIndex={0}
+              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-black/80 rounded-box w-52 text-white"
+            >
               {links}
               {!user && (
                 <>
-                  <li>
-                    <Link to="/auth/login" className="btn btn-outline text-white bg-primary w-full text-sm mt-2 hover:bg-pink-600">
+                  <li className="mt-2">
+                    <Link
+                      to="/auth/login"
+                      className="btn btn-outline text-white bg-primary w-full text-sm hover:bg-pink-600"
+                    >
                       Log In
                     </Link>
                   </li>
-                  <li>
-                    <Link to="/auth/register" className="btn btn-primary text-black bg-secondary w-full text-sm mt-2 hover:bg-yellow-500">
+                  <li className="mt-2">
+                    <Link
+                      to="/auth/register"
+                      className="btn btn-primary text-black bg-secondary w-full text-sm hover:bg-yellow-500"
+                    >
                       Register
                     </Link>
                   </li>
                 </>
               )}
               {user && (
-                <li>
-                  <button onClick={handleLogOut} className="btn btn-outline text-white w-full mt-2 border-white">
-                    Log Out
-                  </button>
-                </li>
+                <>
+                  <li className="flex items-center gap-2 mt-2">
+                    {user.photoURL ? (
+                      <img
+                        src={user.photoURL}
+                        alt={user.displayName}
+                        className="w-16 h-16 rounded-full border-white"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
+                        {user.displayName?.charAt(0) || "U"}
+                      </div>
+                    )}
+                    {/* Show displayName in sm + md (mobile + tablet) */}
+                    <span className="inline md:inline lg:hidden">{user.displayName}</span>
+                  </li>
+                  <li className="mt-2">
+                    <button
+                      onClick={handleLogOut}
+                      className="btn btn-outline text-white w-full border-white"
+                    >
+                      Log Out
+                    </button>
+                  </li>
+                </>
               )}
             </ul>
           </div>
+
           <Link to="/" className="btn btn-ghost normal-case text-xl text-white">
             <Logo />
           </Link>
@@ -116,9 +143,25 @@ const Navbar = () => {
           </button>
 
           {user ? (
-            <button onClick={handleLogOut} className="btn btn-outline text-white border-white">
-              Log Out
-            </button>
+            <div className="flex items-center gap-2">
+              {user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.displayName}
+                  className="w-10 h-10 rounded-full border-2 border-white"
+                  title={user.displayName}
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
+                  {user.displayName?.charAt(0) || "U"}
+                </div>
+              )}
+              {/* Hide displayName in desktop (lg) */}
+              <span className="hidden lg:inline">{/* hidden on lg */}</span>
+              <button onClick={handleLogOut} className="btn btn-outline text-white bg-primary border-white">
+                Log Out
+              </button>
+            </div>
           ) : (
             <>
               <Link to="/auth/login" className="btn btn-outline text-white bg-primary hover:bg-pink-600">
