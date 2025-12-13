@@ -7,7 +7,7 @@ const AllBooks = () => {
   useEffect(() => {
     fetch("/api/books")
       .then((res) => res.json())
-      .then((data) => setBooks(data.filter((b) => b.status === "published")))
+      .then((data) => setBooks(data)) // সকল বই রাখা, filter সরানো
       .catch((err) => console.error(err));
   }, []);
 
@@ -19,6 +19,16 @@ const AllBooks = () => {
           <div className="p-3">
             <h3 className="font-semibold">{b.title}</h3>
             <p className="text-xs text-gray-500">{b.author}</p>
+            <p className="text-sm mt-1">
+              Status:{" "}
+              <span
+                className={`font-semibold ${
+                  b.status === "published" ? "text-green-400" : "text-yellow-400"
+                }`}
+              >
+                {b.status}
+              </span>
+            </p>
             <Link to={`/books/${b._id}`} className="btn btn-sm btn-primary mt-2">
               Details
             </Link>
