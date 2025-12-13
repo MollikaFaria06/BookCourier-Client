@@ -13,7 +13,6 @@ const App = () => (
         <main className="flex-grow">
           <AppRoutes />
         </main>
-
         <Footer />
       </div>
   </BrowserRouter>
