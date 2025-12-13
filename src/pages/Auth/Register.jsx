@@ -50,10 +50,10 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-dark">
-      <div className="card w-full max-w-md shadow-2xl bg-secondary">
+      <div className="card w-full max-w-md shadow-2xl bg-purple-800">
         <div className="card-body">
           <h3 className="text-3xl font-bold text-center">Welcome to BookCourier</h3>
-          <p className="text-center text-sm text-gray-500 mb-4">Please register your account</p>
+          <p className="text-center text-sm text-pink-200 mb-4">Please register your account</p>
 
           <form onSubmit={handleSubmit(handleRegistration)} className="space-y-4">
             <div>

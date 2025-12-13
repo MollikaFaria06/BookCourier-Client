@@ -18,7 +18,7 @@ const AllBooks = () => {
           <img src={b.cover} alt={b.title} className="w-full h-56 object-cover" />
           <div className="p-3">
             <h3 className="font-semibold">{b.title}</h3>
-            <p className="text-xs text-gray-300">{b.author}</p>
+            <p className="text-xs text-gray-500">{b.author}</p>
             <Link to={`/books/${b._id}`} className="btn btn-sm btn-primary mt-2">
               Details
             </Link>

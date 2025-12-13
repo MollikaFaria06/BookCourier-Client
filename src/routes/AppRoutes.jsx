@@ -11,11 +11,11 @@ import Register from "../pages/Auth/Register";
 import BookDetails from "../pages/BookDetails";
 
 export default function AppRoutes() {
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
   const routes = [
     { path: "/", element: <Home /> },
     { path: "/books", element: <Books /> },
-    { path: "/books/:id", element: <BookDetails user={currentUser} /> },
+    { path: "/books/:id", element: <BookDetails/> },
     {
       path: "coverage",
       Component: Coverage,
