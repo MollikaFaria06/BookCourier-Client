@@ -5,10 +5,11 @@ import { useAuth } from "../contexts/AuthContext";
 import Home from "../pages/Home";
 import Books from "../pages/AllBooks";
 import Coverage from "../pages/Coverage"; 
-import Dashboard from "../Dashboard/DashboardLayout";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import BookDetails from "../pages/BookDetails";
+import PrivateRoute from "./PrivateRoute";
+import DashboardRoutes from "./DashboardRoutes";
 
 export default function AppRoutes() {
   const { user } = useAuth();
@@ -21,7 +22,14 @@ export default function AppRoutes() {
       Component: Coverage,
       loader: () => fetch("/serviceCenter.json").then((res) => res.json()),
     },
-    { path: "/dashboard/*", element: <Dashboard /> },
+    {
+      path: "/dashboard/*",
+      element: (
+        <PrivateRoute>
+          <DashboardRoutes />
+        </PrivateRoute>
+      ),
+    },
     { path: "/auth/login", element: <Login /> },
     { path: "/auth/register", element: <Register /> },
     { path: "*", element: <Navigate to="/" replace /> },

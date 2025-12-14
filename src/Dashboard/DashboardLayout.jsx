@@ -1,13 +1,32 @@
-import React from "react";
-import Sidebar from "../components/dashboard/Sidebar"; // adjust relative path if needed
+// src/dashboard/DashboardLayout.jsx
+import React, { useState } from "react";
+import Sidebar from "./Sidebar";
+import Topbar from "./Topbar";
+import { Outlet } from "react-router-dom";
 
-export default function DashboardLayout() {
+const DashboardLayout = () => {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
+  };
+
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 p-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <Sidebar collapsed={collapsed} />
+
+      <div className="flex-1 flex flex-col">
+        {/* Topbar */}
+        <Topbar toggleSidebar={toggleSidebar} />
+
+        {/* Main Content */}
+        <main className="p-4 overflow-auto flex-1">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
-}
+};
+
+export default DashboardLayout;

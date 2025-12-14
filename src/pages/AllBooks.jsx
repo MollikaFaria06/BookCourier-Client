@@ -7,7 +7,7 @@ const AllBooks = () => {
   useEffect(() => {
     fetch("/api/books")
       .then((res) => res.json())
-      .then((data) => setBooks(data)) // সকল বই রাখা, filter সরানো
+      .then((data) => setBooks(data)) 
       .catch((err) => console.error(err));
   }, []);
 
