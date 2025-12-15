@@ -21,12 +21,14 @@ const Login = () => {
   const handleLogin = async (data) => {
     setLoading(true);
     try {
-      await login(data.email, data.password);
-      toast.success("Logged in successfully!");
+      const userCredential = await login(data.email, data.password);
+
+      //  login success
+      toast.success("Login Successful !");
       navigate(from, { replace: true });
     } catch (err) {
-      toast.error(err?.message || "Login failed.");
       console.error(err);
+      toast.error(err.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -42,7 +44,12 @@ const Login = () => {
           <form onSubmit={handleSubmit(handleLogin)} className="space-y-4">
             <div>
               <label className="label"><span className="label-text text-black">Email</span></label>
-              <input type="email" placeholder="your@email.com" {...register("email", { required: "Email is required" })} className="input text-black input-bordered w-full"/>
+              <input
+                type="email"
+                placeholder="your@email.com"
+                {...register("email", { required: "Email is required" })}
+                className="input text-black input-bordered w-full"
+              />
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
 
@@ -57,19 +64,27 @@ const Login = () => {
                 })}
                 className="input text-black input-bordered w-full pr-10"
               />
-              <button type="button" className="absolute inset-y-10 right-3 flex items-center" onClick={() => setShowPassword(!showPassword)}>
+              <button
+                type="button"
+                className="absolute inset-y-10 right-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
                 {showPassword ? <EyeSlashIcon className="h-5 w-5 text-gray-500"/> : <EyeIcon className="h-5 w-5 text-gray-500"/>}
               </button>
               {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
             </div>
 
-            <button type="submit" className={`btn bg-primary w-full ${loading ? "loading" : ""}`} disabled={loading}>
+            <button
+              type="submit"
+              className={`btn bg-primary w-full ${loading ? "loading" : ""}`}
+              disabled={loading}
+            >
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
           <p className="text-center text-sm mt-2">
-            New to BookCourier? <Link to="/auth/register" state={location.state} className="text-primary underline">Register</Link>
+            New to BookCourier? <Link to="/auth/register" state={location.state} className="text-secondary underline">Register</Link>
           </p>
 
           <div className="divider">OR</div>

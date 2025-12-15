@@ -9,8 +9,8 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-hot-toast";
 
 const Register = () => {
+  const { register: registerUser, updateUserProfile } = useAuth();
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { registerUser, updateUserProfile } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -22,10 +22,11 @@ const Register = () => {
   const handleRegistration = async (data) => {
     setLoading(true);
     try {
-      // 1. Create user
+      // 1️⃣ Firebase: Create user
       const result = await registerUser(data.email, data.password);
+      const firebaseUser = result.user;
 
-      // 2. Upload profile photo if exists
+      // 2️⃣ Upload profile photo if provided
       let photoURL = "";
       if (data.photo && data.photo[0]) {
         const formData = new FormData();
@@ -35,14 +36,17 @@ const Register = () => {
         photoURL = res.data.data.url;
       }
 
-      // 3. Update user profile
-      await updateUserProfile({ displayName: data.name, photoURL });
+      // 3️⃣ Update Firebase user profile
+      await updateUserProfile({
+        displayName: data.name,
+        photoURL,
+      });
 
       toast.success("Registration successful!");
       navigate(from, { replace: true });
     } catch (err) {
-      toast.error(err?.message || "Registration failed.");
       console.error(err);
+      toast.error(err?.message || "Registration failed.");
     } finally {
       setLoading(false);
     }
@@ -56,23 +60,41 @@ const Register = () => {
           <p className="text-center text-sm text-pink-200 mb-4">Please register your account</p>
 
           <form onSubmit={handleSubmit(handleRegistration)} className="space-y-4">
+            {/* Name */}
             <div>
               <label className="label"><span className="label-text text-black">Name</span></label>
-              <input type="text" placeholder="Your Name" {...register("name", { required: "Name is required" })} className="input text-black input-bordered w-full"/>
+              <input
+                type="text"
+                placeholder="Your Name"
+                {...register("name", { required: "Name is required" })}
+                className="input text-black input-bordered w-full"
+              />
               {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
             </div>
 
+            {/* Profile Photo */}
             <div>
               <label className="label"><span className="label-text text-black">Profile Photo</span></label>
-              <input type="file" {...register("photo")} className="file-input w-full text-black"/>
+              <input
+                type="file"
+                {...register("photo")}
+                className="file-input w-full text-black"
+              />
             </div>
 
+            {/* Email */}
             <div>
               <label className="label"><span className="label-text text-black">Email</span></label>
-              <input type="email" placeholder="your@email.com" {...register("email", { required: "Email is required" })} className="input text-black input-bordered w-full"/>
+              <input
+                type="email"
+                placeholder="your@email.com"
+                {...register("email", { required: "Email is required" })}
+                className="input text-black input-bordered w-full"
+              />
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
 
+            {/* Password */}
             <div className="relative">
               <label className="label"><span className="label-text text-black">Password</span></label>
               <input
@@ -84,19 +106,28 @@ const Register = () => {
                 })}
                 className="input text-black input-bordered w-full pr-10"
               />
-              <button type="button" className="absolute inset-y-10 right-3 flex items-center" onClick={() => setShowPassword(!showPassword)}>
+              <button
+                type="button"
+                className="absolute inset-y-10 right-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
                 {showPassword ? <EyeSlashIcon className="h-5 w-5 text-gray-500"/> : <EyeIcon className="h-5 w-5 text-gray-500"/>}
               </button>
               {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
             </div>
 
-            <button type="submit" className={`btn bg-primary w-full ${loading ? "loading" : ""}`} disabled={loading}>
+            {/* Submit */}
+            <button
+              type="submit"
+              className={`btn bg-primary w-full ${loading ? "loading" : ""}`}
+              disabled={loading}
+            >
               {loading ? "Registering..." : "Register"}
             </button>
           </form>
 
           <p className="text-center text-sm mt-2">
-            Already have an account? <Link to="/auth/login" state={location.state} className="text-primary underline">Login</Link>
+            Already have an account? <Link to="/auth/login" state={location.state} className="text-secondary underline">Login</Link>
           </p>
 
           <div className="divider">OR</div>

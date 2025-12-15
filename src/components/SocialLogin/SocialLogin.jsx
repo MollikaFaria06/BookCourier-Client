@@ -1,26 +1,36 @@
+// src/components/SocialLogin/SocialLogin.jsx
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { toast } from "react-hot-toast";
 
 const SocialLogin = () => {
   const { signInGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const from = location?.state?.from || "/";
 
   const handleGoogleLogin = async () => {
-    setError("");
     setLoading(true);
+    setError("");
     try {
-      await signInGoogle();
+      const result = await signInGoogle();
+      const user = result.user;
+
+      // Optional: show toast notification
+      toast.success("Login Successful !!");
+
+      // Redirect to previous page or home
       navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
       setError(err?.message || "Google login failed");
+      toast.error(err?.message || "Google login failed");
     } finally {
       setLoading(false);
     }

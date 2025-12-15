@@ -1,15 +1,34 @@
+// src/components/LatestBooks.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const LatestBooks = () => {
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/books?limit=6")
-      .then((res) => res.json())
-      .then((data) => setBooks(data.slice(0, 6)))
-      .catch((err) => console.error(err));
+    const fetchBooks = async () => {
+      try {
+        const res = await fetch("/api/books");
+        const data = await res.json();
+        if (data.success) {
+          setBooks(data.books.slice(0, 6)); // latest 6 books
+        } else {
+          console.error("Failed to fetch books:", data.message);
+        }
+      } catch (err) {
+        console.error("Error fetching books:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBooks();
   }, []);
+
+  if (loading) {
+    return <p className="text-center py-8">Loading books...</p>;
+  }
 
   return (
     <section className="py-12">
@@ -27,13 +46,14 @@ const LatestBooks = () => {
             className="bg-white/5 rounded-lg overflow-hidden shadow-md"
           >
             <img
-              src={b.cover}
+              src={b.cover || b.image} // backend এ cover না থাকলে image fallback
               alt={b.title}
               className="w-full h-56 object-cover"
             />
             <div className="p-3">
               <h3 className="font-semibold text-sm">{b.title}</h3>
               <p className="text-xs text-gray-400">{b.author}</p>
+              <p className="text-sm font-medium mt-1">${b.price}</p>
 
               <div className="mt-3 flex items-center justify-between">
                 <Link
@@ -50,5 +70,6 @@ const LatestBooks = () => {
     </section>
   );
 };
+
 
 export default LatestBooks;

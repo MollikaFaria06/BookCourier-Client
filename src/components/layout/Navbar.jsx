@@ -8,6 +8,7 @@ const Navbar = () => {
   const { user, logOut } = useAuth();
   const [theme, setTheme] = useState("light");
 
+  // Load theme from localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
@@ -54,7 +55,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
         {/* Navbar Start */}
         <div className="flex items-center gap-4">
-          {/* Mobile/Tablet dropdown */}
+          {/* Mobile dropdown */}
           <div className="dropdown lg:hidden">
             <label tabIndex={0} className="btn btn-ghost text-white">
               <svg
@@ -98,21 +99,20 @@ const Navbar = () => {
                     {user.photoURL ? (
                       <img
                         src={user.photoURL}
-                        alt={user.displayName}
-                        className="w-16 h-16 rounded-full border-white"
+                        alt={user.name}
+                        className="w-15 h-15 rounded-full border-white"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
-                        {user.displayName?.charAt(0) || "U"}
+                      <div className="w-15 h-15 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
+                        {user.name?.charAt(0) || "U"}
                       </div>
                     )}
-                    {/* Show displayName in sm + md (mobile + tablet) */}
-                    <span className="inline md:inline lg:hidden">{user.displayName}</span>
+                    <span className="inline">{user.name}</span>
                   </li>
                   <li className="mt-2">
                     <button
                       onClick={handleLogOut}
-                      className="btn btn-outline text-white w-full border-white"
+                      className="btn btn-outline bg-black hover:bg-secondary text-white w-full border-white"
                     >
                       Log Out
                     </button>
@@ -147,27 +147,35 @@ const Navbar = () => {
               {user.photoURL ? (
                 <img
                   src={user.photoURL}
-                  alt={user.displayName}
+                  alt={user.name}
                   className="w-10 h-10 rounded-full border-2 border-white"
-                  title={user.displayName}
+                  title={user.name}
                 />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
-                  {user.displayName?.charAt(0) || "U"}
+                  {user.name?.charAt(0) || "U"}
                 </div>
               )}
-              {/* Hide displayName in desktop (lg) */}
-              <span className="hidden lg:inline">{/* hidden on lg */}</span>
-              <button onClick={handleLogOut} className="btn btn-outline text-white bg-primary border-white">
+              <span className="hidden lg:inline">{user.name}</span>
+              <button
+                onClick={handleLogOut}
+                className="btn btn-outline text-white bg-primary border-white"
+              >
                 Log Out
               </button>
             </div>
           ) : (
             <>
-              <Link to="/auth/login" className="btn btn-outline text-white bg-primary hover:bg-pink-600">
+              <Link
+                to="/auth/login"
+                className="btn btn-outline text-white bg-primary hover:bg-pink-600"
+              >
                 Log In
               </Link>
-              <Link to="/auth/register" className="btn btn-primary text-black bg-secondary hover:bg-yellow-500">
+              <Link
+                to="/auth/register"
+                className="btn btn-primary text-black bg-secondary hover:bg-yellow-500"
+              >
                 Register
               </Link>
             </>

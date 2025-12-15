@@ -1,67 +1,90 @@
-// src/dashboard/user/MyOrders.jsx
-import React, { useState } from "react";
-
-const initialOrders = [
-  { id: 1, title: "Book 1", date: "2025-12-10", status: "pending" },
-  { id: 2, title: "Book 2", date: "2025-12-11", status: "paid" },
-];
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const MyOrders = () => {
-  const [orders, setOrders] = useState(initialOrders);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [orders, setOrders] = useState([]);
 
-  const handleCancel = (id) => {
-    setOrders(
-      orders.map((order) =>
-        order.id === id ? { ...order, status: "cancelled" } : order
-      )
-    );
+  useEffect(() => {
+    if (!user?.email) return;
+    fetch(`http://localhost:5000/api/orders?email=${user.email}`)
+      .then(res => res.json())
+      .then(data => setOrders(data))
+      .catch(err => console.error(err));
+  }, [user]);
+
+  const handleCancel = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/orders/${id}/cancel`, {
+        method: "PATCH",
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error("Cancel failed");
+
+      toast.success("Order cancelled");
+      setOrders(prev => prev.map(o => o._id === id ? { ...o, status: "cancelled" } : o));
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to cancel order");
+    }
   };
 
   const handlePayNow = (id) => {
-    // Redirect to payment page
-    window.location.href = `/dashboard/payment/${id}`;
+    navigate(`/dashboard/payment/${id}`);
   };
 
   return (
-    <div>
-      <h2 className="text-2xl text-secondary font-bold mb-4">My Orders</h2>
-      <table className="w-full border border-gray-900">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="p-2 border-2 text-black ">Book</th>
-            <th className="p-2 border-2 text-black">Order Date</th>
-            <th className="p-2 border-2 text-black">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="bg-gray-100">
-          {orders.map((order) => (
-            <tr key={order.id}>
-              <td className="p-2 border-2 text-black">{order.title}</td>
-              <td className="p-2 border-2 text-black">{order.date}</td>
-              <td className="p-2 border-2 text-black">
-                {order.status === "pending" && (
-                  <>
-                    <button
-                      onClick={() => handleCancel(order.id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded mr-2"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => handlePayNow(order.id)}
-                      className="bg-green-500 text-white px-2 py-1 rounded"
-                    >
-                      Pay Now
-                    </button>
-                  </>
-                )}
-                {order.status === "paid" && <span>Paid</span>}
-                {order.status === "cancelled" && <span>Cancelled</span>}
-              </td>
+    <div className="p-6">
+      <h2 className="text-2xl  font-bold mb-4">My Orders</h2>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full border border-gray-300 bg-purple-800">
+          <thead className="bg-secondary">
+            <tr>
+              <th className="px-4  py-2">Book</th>
+              <th className="px-4 py-2">Price</th>
+              <th className="px-4 py-2">Date</th>
+              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">Payment</th>
+              <th className="px-4 py-2">Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {orders.map(order => (
+              <tr key={order._id} className="text-center text-white border-b">
+                <td className="px-4 py-2">{order.bookTitle}</td>
+                <td className="px-4 py-2">${order.price.toFixed(2)}</td>
+                <td className="px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-2">{order.status}</td>
+                <td className="px-4 py-2">{order.paymentStatus}</td>
+                <td className="px-4 py-2">
+                  {order.status === "pending" && order.paymentStatus === "unpaid" ? (
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => handleCancel(order._id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => handlePayNow(order._id)}
+                        className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition"
+                      >
+                        Pay Now
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="text-black italic">No actions</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
