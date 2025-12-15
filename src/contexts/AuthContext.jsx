@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   GoogleAuthProvider,
@@ -18,21 +17,27 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Register new user
-  const registerUser = async (email, password) => {
+  // Register
+  const registerUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
-  // Update user profile
+  // Update profile
   const updateUserProfile = async (profile) => {
     if (auth.currentUser) {
       await updateProfile(auth.currentUser, profile);
-      setUser({ ...auth.currentUser }); // Update navbar immediately
+
+      // 🔥 update app user
+      setUser((prev) => ({
+        ...prev,
+        name: profile.displayName,
+        photoURL: profile.photoURL,
+      }));
     }
   };
 
-  // Login user
+  // Login
   const login = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
@@ -51,12 +56,27 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  // Listen for auth changes
+  // 🔥 AUTH STATE LISTENER (MAIN FIX)
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // 🔥 FIREBASE USER → APP USER
+        const appUser = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          role: "user", // ✅ DEFAULT ROLE (IMPORTANT)
+        };
+
+        setUser(appUser);
+      } else {
+        setUser(null);
+      }
+
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -72,7 +92,7 @@ export const AuthProvider = ({ children }) => {
         logOut,
       }}
     >
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

@@ -1,29 +1,35 @@
-// src/dashboard/DashboardLayout.jsx
-import React, { useState } from "react";
-import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
 import { Outlet } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import Logo from "../components/Logo/Logo";
 
 const DashboardLayout = () => {
-  const [collapsed, setCollapsed] = useState(false);
-
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed);
-  };
-
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <Sidebar collapsed={collapsed} />
+    <div className="drawer lg:drawer-open">
+      <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
 
-      <div className="flex-1 flex flex-col">
-        {/* Topbar */}
-        <Topbar toggleSidebar={toggleSidebar} />
+      <div className="drawer-content flex flex-col">
+        <nav className="navbar bg-base-300">
+          <div className="flex-none lg:hidden">
+            <label
+              htmlFor="dashboard-drawer"
+              className="btn btn-square btn-ghost"
+            >
+              ☰
+            </label>
+          </div>
+          <div className=" flex gap-4 items-end justify-center px-4 font-semibold"> <Logo></Logo>
+          <h1 className="text-purple-600 text-3xl mb-2">Dashboard</h1>
+          </div>
+        </nav>
 
-        {/* Main Content */}
-        <main className="p-4 overflow-auto flex-1">
+        <div className="p-4">
           <Outlet />
-        </main>
+        </div>
+      </div>
+
+      <div className="drawer-side">
+        <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
+        <Sidebar />
       </div>
     </div>
   );

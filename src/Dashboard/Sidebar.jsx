@@ -1,37 +1,49 @@
-// src/dashboard/Sidebar.jsx
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
-const Sidebar = ({ collapsed }) => {
+const Sidebar = () => {
+  const { user } = useAuth();
   const location = useLocation();
 
-  const menuItems = [
-    { name: "My Orders", path: "/dashboard/my-orders" },
-    { name: "My Profile", path: "/dashboard/my-profile" },
-    { name: "Invoices", path: "/dashboard/invoices" },
-    // Add Librarian/Admin links dynamically based on role
-  ];
+  if (!user) return null;
 
-  const isActive = (path) => location.pathname === path;
+  const menuByRole = {
+    user: [
+      { name: "My Orders", path: "/dashboard/my-orders" },
+      { name: "Invoices", path: "/dashboard/invoices" },
+      { name: "My Profile", path: "/dashboard/my-profile" },
+    ],
+    librarian: [
+      { name: "Add Book", path: "/dashboard/librarian/add-book" },
+      { name: "My Books", path: "/dashboard/librarian/my-books" },
+      { name: "Orders", path: "/dashboard/librarian/orders" },
+      { name: "My Profile", path: "/dashboard/my-profile" },
+    ],
+    admin: [
+      { name: "All Users", path: "/dashboard/admin/all-users" },
+      { name: "Manage Books", path: "/dashboard/admin/manage-books" },
+      { name: "My Profile", path: "/dashboard/my-profile" },
+    ],
+  };
+
+  const menuItems = menuByRole[user.role] || [];
 
   return (
-    <div
-      className={`bg-gray-800 text-white h-full p-4 transition-all duration-300 ${
-        collapsed ? "w-16" : "w-64"
-      }`}
-    >
-      <h1 className={`text-xl font-bold mb-6 ${collapsed && "hidden"}`}>
-        Dashboard
-      </h1>
-      <ul>
+    <div className="w-64 min-h-full bg-base-200">
+      <div className="p-4 text-lg font-bold">
+        📚 Dashboard
+      </div>
+
+      <ul className="menu p-2">
         {menuItems.map((item) => (
-          <li key={item.path} className="mb-2">
+          <li key={item.path}>
             <Link
               to={item.path}
-              className={`block whitespace-nowrap px-3 py-2 rounded hover:bg-gray-700 transition-colors
-                ${isActive(item.path) ? "bg-gray-700 font-bold" : ""}`}
+              className={
+                location.pathname === item.path ? "active" : ""
+              }
             >
-              {collapsed ? item.name[0] : item.name}
+              {item.name}
             </Link>
           </li>
         ))}
