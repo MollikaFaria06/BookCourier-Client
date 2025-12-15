@@ -1,60 +1,98 @@
-// src/dashboard/shared/MyProfile.jsx
-import React, { useState } from "react";
+
+
+
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import toast from "react-hot-toast";
 
 const MyProfile = () => {
-  const [user, setUser] = useState({
-    name: "Faria Alam",
-    email: "faria@example.com",
-    image: "https://via.placeholder.com/150",
-  });
+  const { user, updateUserProfile } = useAuth();
 
-  const [name, setName] = useState(user.name);
-  const [image, setImage] = useState(user.image);
+  const [name, setName] = useState("");
+  const [photo, setPhoto] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleUpdate = (e) => {
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setPhoto(user.photoURL || "");
+    }
+  }, [user]);
+
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    setUser({ ...user, name, image });
-    alert("Profile updated!");
+    setLoading(true);
+
+    const toastId = toast.loading("Updating profile...");
+
+    try {
+      await updateUserProfile({
+        displayName: name,
+        photoURL: photo,
+      });
+
+      toast.success("Profile updated successfully", {
+        id: toastId,
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update profile", {
+        id: toastId,
+      });
+    }
+
+    setLoading(false);
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setImage(url);
-    }
+    if (!file) return;
+
+    const imageURL = URL.createObjectURL(file);
+    setPhoto(imageURL);
   };
 
+  if (!user) return null;
+
   return (
-    <div className="max-w-md mx-auto bg-blue-900 p-6 rounded shadow">
-      <h2 className="text-2xl text-secondary font-bold mb-4">My Profile</h2>
+    <div className="max-w-md mx-auto bg-secondary p-6 rounded shadow">
+      <h2 className="text-2xl font-bold mb-4">My Profile</h2>
+
       <div className="flex flex-col items-center mb-4">
         <img
-          src={image}
+          src={photo || "https://via.placeholder.com/150"}
           alt="Profile"
-          className="w-24 h-24 text-pink-200  rounded-full mb-2"
+          className="w-24 h-24 rounded-full mb-2 object-cover"
         />
-        <span className="text-pink-200">{user.email}</span>
+        <p className="text-sm opacity-70">{user.email}</p>
       </div>
+
       <form onSubmit={handleUpdate} className="space-y-4">
         <div>
-          <label className="block text-pink-200  font-semibold mb-1">Name</label>
+          <label className="block font-semibold mb-1">Name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full text-pink-200  border px-3 py-2 rounded"
+            className="input text-black input-bordered w-full"
           />
         </div>
+
         <div>
-          <label className="block text-pink-200 font-semibold mb-1">Profile Image</label>
-          <input className="file-input text-black w-full" type="file" onChange={handleImageChange} />
+          <label className="block font-semibold mb-1">Profile Image</label>
+          <input
+            type="file"
+            className="file-input file-input-bordered text-black w-full"
+            onChange={handleImageChange}
+          />
         </div>
+
         <button
           type="submit"
-          className="bg-primary text-white px-4 py-2 rounded"
+          disabled={loading}
+          className="btn btn-primary w-full"
         >
-          Update Profile
+          {loading ? "Updating..." : "Update Profile"}
         </button>
       </form>
     </div>

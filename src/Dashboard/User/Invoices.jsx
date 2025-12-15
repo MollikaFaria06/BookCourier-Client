@@ -11,7 +11,7 @@ const Invoices = () => {
 
   return (
     <div>
-      <h2 className="text-2xl text-black font-bold mb-4">Invoices</h2>
+      <h2 className="text-2xl text-secondary font-bold mb-4">Invoices</h2>
       <table className="w-full border border-gray-300">
         <thead className="bg-gray-200">
           <tr>
@@ -21,7 +21,7 @@ const Invoices = () => {
             <th className="p-2 border-2 text-black">Date</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-gray-100">
           {invoices.map((inv) => (
             <tr key={inv.id}>
               <td className="p-2 border-2 text-black">{inv.id}</td>

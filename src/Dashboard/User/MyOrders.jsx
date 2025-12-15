@@ -24,7 +24,7 @@ const MyOrders = () => {
 
   return (
     <div>
-      <h2 className="text-2xl text-black font-bold mb-4">My Orders</h2>
+      <h2 className="text-2xl text-secondary font-bold mb-4">My Orders</h2>
       <table className="w-full border border-gray-900">
         <thead className="bg-gray-200">
           <tr>
@@ -33,7 +33,7 @@ const MyOrders = () => {
             <th className="p-2 border-2 text-black">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-gray-100">
           {orders.map((order) => (
             <tr key={order.id}>
               <td className="p-2 border-2 text-black">{order.title}</td>

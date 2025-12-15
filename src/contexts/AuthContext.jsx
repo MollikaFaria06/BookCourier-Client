@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
     if (auth.currentUser) {
       await updateProfile(auth.currentUser, profile);
 
-      // 🔥 update app user
+      //  update app user
       setUser((prev) => ({
         ...prev,
         name: profile.displayName,
@@ -56,17 +56,16 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  // 🔥 AUTH STATE LISTENER (MAIN FIX)
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        // 🔥 FIREBASE USER → APP USER
         const appUser = {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           name: firebaseUser.displayName,
           photoURL: firebaseUser.photoURL,
-          role: "user", // ✅ DEFAULT ROLE (IMPORTANT)
+          role: "user", 
         };
 
         setUser(appUser);
