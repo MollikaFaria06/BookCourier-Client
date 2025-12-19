@@ -1,24 +1,46 @@
-// src/dashboard/librarian/Orders.jsx
-import React, { useState } from "react";
-
-const initialOrders = [
-  { id: 1, book: "Book 1", user: "User A", status: "pending" },
-  { id: 2, book: "Book 2", user: "User B", status: "shipped" },
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Orders = () => {
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState([]);
 
-  const handleCancel = (id) => {
-    setOrders(
-      orders.map((o) => (o.id === id ? { ...o, status: "cancelled" } : o))
-    );
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const res = await axios.get(`${process.env.VITE_API_URL}/librarian/orders`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setOrders(res.data.orders);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchOrders();
+  }, []);
+
+  const handleCancel = async (id) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      await axios.patch(`${process.env.VITE_API_URL}/librarian/orders/${id}/cancel`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders(orders.map(o => (o._id === id ? { ...o, status: "cancelled" } : o)));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleStatusChange = (id, newStatus) => {
-    setOrders(
-      orders.map((o) => (o.id === id ? { ...o, status: newStatus } : o))
-    );
+  const handleStatusChange = async (id, status) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      await axios.patch(`${process.env.REACT_APP_API_URL}/librarian/orders/${id}/status`, { status }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders(orders.map(o => (o._id === id ? { ...o, status } : o)));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const statusOptions = ["pending", "shipped", "delivered"];
@@ -37,45 +59,22 @@ const Orders = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
-            <tr key={order.id}>
-              <td className="p-2 border">{order.id}</td>
-              <td className="p-2 border">{order.book}</td>
-              <td className="p-2 border">{order.user}</td>
+          {orders.map(order => (
+            <tr key={order._id}>
+              <td className="p-2 border">{order._id}</td>
+              <td className="p-2 border">{order.bookName}</td>
+              <td className="p-2 border">{order.userName}</td>
               <td className="p-2 border">
                 {order.status !== "cancelled" ? (
-                  <select
-                    value={order.status}
-                    onChange={(e) =>
-                      handleStatusChange(order.id, e.target.value)
-                    }
-                    className="border px-2 py-1 rounded"
-                  >
-                    {statusOptions
-                      .filter(
-                        (s) =>
-                          (order.status === "pending" && s !== "delivered") ||
-                          (order.status === "shipped") ||
-                          s === order.status
-                      )
-                      .map((s) => (
-                        <option key={s} value={s}>
-                          {s}
-                        </option>
-                      ))}
+                  <select value={order.status} onChange={(e) => handleStatusChange(order._id, e.target.value)} className="border px-2 py-1 rounded">
+                    {statusOptions.filter(s => (order.status === "pending" && s !== "delivered") || order.status === "shipped" || s === order.status)
+                      .map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
-                ) : (
-                  "Cancelled"
-                )}
+                ) : "Cancelled"}
               </td>
               <td className="p-2 border">
                 {order.status === "pending" && (
-                  <button
-                    onClick={() => handleCancel(order.id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
-                  >
-                    Cancel
-                  </button>
+                  <button onClick={() => handleCancel(order._id)} className="bg-red-500 text-white px-2 py-1 rounded">Cancel</button>
                 )}
               </td>
             </tr>
