@@ -1,91 +1,100 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import toast from "react-hot-toast";
 
 const MyOrders = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const [orders, setOrders] = useState([]);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (!user?.email) return;
-    fetch(`http://localhost:5000/api/orders?email=${user.email}`)
-      .then(res => res.json())
-      .then(data => setOrders(data))
-      .catch(err => console.error(err));
-  }, [user]);
-
-  const handleCancel = async (id) => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/orders/${id}/cancel`, {
-        method: "PATCH",
+  // Fetch user's orders
+  const { data: orders = [], isLoading } = useQuery({
+    queryKey: ["myOrders", user?.email],
+    queryFn: async () => {
+      if (!user) return [];
+      const token = await user.getIdToken();
+      const res = await axios.get("http://localhost:5000/api/users/my-orders", {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error("Cancel failed");
+      return res.data.orders;
+    },
+    enabled: !!user, // only run if user exists
+  });
 
-      toast.success("Order cancelled");
-      setOrders(prev => prev.map(o => o._id === id ? { ...o, status: "cancelled" } : o));
-    } catch (err) {
+  // Mutation for cancel/pay order
+  const updateOrder = useMutation({
+    mutationFn: async ({ id, action }) => {
+      if (!user) throw new Error("Unauthorized");
+      const token = await user.getIdToken();
+      const url = `http://localhost:5000/api/users/${action}/${id}`;
+      await axios.put(url, {}, { headers: { Authorization: `Bearer ${token}` } });
+      return { id, action };
+    },
+    onSuccess: ({ id, action }) => {
+      // update cached orders after mutation
+      queryClient.setQueryData(["myOrders", user?.email], (old) =>
+        old.map((o) =>
+          o._id === id
+            ? {
+                ...o,
+                status: action === "cancel" ? "cancelled" : o.status,
+                paymentStatus: action === "pay" ? "paid" : o.paymentStatus,
+              }
+            : o
+        )
+      );
+      toast.success(`Order ${action === "cancel" ? "cancelled" : "paid"} successfully`);
+    },
+    onError: (err) => {
       console.error(err);
-      toast.error("Failed to cancel order");
-    }
-  };
+      toast.error("Failed to update order");
+    },
+  });
 
-  const handlePayNow = (id) => {
-    navigate(`/dashboard/payment/${id}`);
-  };
+  if (isLoading) return <p className="text-center mt-10">Loading orders...</p>;
+  if (orders.length === 0) return <p className="text-center mt-10">No orders found</p>;
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl  font-bold mb-4">My Orders</h2>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 bg-purple-800">
-          <thead className="bg-secondary">
-            <tr>
-              <th className="px-4  py-2">Book</th>
-              <th className="px-4 py-2">Price</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Payment</th>
-              <th className="px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map(order => (
-              <tr key={order._id} className="text-center text-white border-b">
-                <td className="px-4 py-2">{order.bookTitle}</td>
-                <td className="px-4 py-2">${order.price.toFixed(2)}</td>
-                <td className="px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td className="px-4 py-2">{order.status}</td>
-                <td className="px-4 py-2">{order.paymentStatus}</td>
-                <td className="px-4 py-2">
-                  {order.status === "pending" && order.paymentStatus === "unpaid" ? (
-                    <div className="flex gap-2 justify-center">
-                      <button
-                        onClick={() => handleCancel(order._id)}
-                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => handlePayNow(order._id)}
-                        className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition"
-                      >
-                        Pay Now
-                      </button>
-                    </div>
-                  ) : (
-                    <span className="text-black italic">No actions</span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <table className="min-w-full border">
+      <thead>
+        <tr>
+          <th>Book</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {orders.map((o) => (
+          <tr key={o._id}>
+            <td>{o.bookTitle}</td>
+            <td>${o.price}</td>
+            <td>{o.status}</td>
+            <td>{o.paymentStatus}</td>
+            <td className="flex gap-2">
+              {o.status === "pending" && o.paymentStatus !== "paid" && (
+                <>
+                  <button
+                    className="btn btn-sm btn-error"
+                    onClick={() => updateOrder.mutate({ id: o._id, action: "cancel" })}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-sm btn-success"
+                    onClick={() => updateOrder.mutate({ id: o._id, action: "pay" })}
+                  >
+                    Pay Now
+                  </button>
+                </>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };
 

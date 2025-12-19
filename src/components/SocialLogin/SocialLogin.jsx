@@ -1,36 +1,42 @@
-// src/components/SocialLogin/SocialLogin.jsx
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { toast } from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const SocialLogin = () => {
   const { signInGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const from = location?.state?.from || "/";
+  const from =
+    location?.state?.from?.pathname &&
+    !location.state.from.pathname.startsWith("/auth")
+      ? location.state.from.pathname
+      : "/";
 
   const handleGoogleLogin = async () => {
     setLoading(true);
-    setError("");
     try {
-      const result = await signInGoogle();
-      const user = result.user;
+      const user = await signInGoogle();
 
-      // Optional: show toast notification
-      toast.success("Login Successful !!");
+      await Swal.fire({
+        icon: "success",
+        title: "Login Successful!",
+        text: `Welcome back, ${user.name || "User"}!`,
+        timer: 2000,
+        showConfirmButton: false,
+      });
 
-      // Redirect to previous page or home
-      navigate(from, { replace: true });
+      navigate("/", { replace: true });
     } catch (err) {
       console.error(err);
-      setError(err?.message || "Google login failed");
-      toast.error(err?.message || "Google login failed");
+      Swal.fire({
+        icon: "error",
+        title: "Google Login Failed",
+        text: err.message || "Something went wrong",
+      });
     } finally {
       setLoading(false);
     }
@@ -38,8 +44,6 @@ const SocialLogin = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-
       <button
         onClick={handleGoogleLogin}
         className={`btn w-full border border-gray-300 hover:bg-gray-100 flex items-center justify-center gap-2 ${

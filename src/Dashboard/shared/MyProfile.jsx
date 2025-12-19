@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import toast from "react-hot-toast";
+import Swal from "sweetalert2"; // <-- import SweetAlert2
 import { FaEnvelope, FaUser, FaShieldAlt, FaClock } from "react-icons/fa";
 
 const MyProfile = () => {
@@ -12,7 +12,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     if (user) {
-      setName(user.name || ""); // Display Name from user.name
+      setName(user.name || ""); 
       setPhoto(user.photoURL || "");
     }
   }, [user]);
@@ -21,7 +21,12 @@ const MyProfile = () => {
     e.preventDefault();
     setLoading(true);
 
-    const toastId = toast.loading("Updating profile...");
+    // SweetAlert loading
+    Swal.fire({
+      title: "Updating profile...",
+      didOpen: () => Swal.showLoading(),
+      allowOutsideClick: false,
+    });
 
     try {
       await updateUserProfile({
@@ -29,10 +34,19 @@ const MyProfile = () => {
         photoURL: photo,
       });
 
-      toast.success("Profile updated successfully", { id: toastId });
+      Swal.fire({
+        icon: "success",
+        title: "Profile updated successfully",
+        timer: 2000,
+        showConfirmButton: false,
+      });
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update profile", { id: toastId });
+      Swal.fire({
+        icon: "error",
+        title: "Failed to update profile",
+        text: error.message || "Something went wrong!",
+      });
     }
 
     setLoading(false);
