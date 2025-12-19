@@ -11,7 +11,6 @@ const Payment = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Fetch order details
   const { data: order, isLoading } = useQuery({
     queryKey: ["order", id],
     queryFn: async () => {
@@ -22,13 +21,11 @@ const Payment = () => {
       });
       return res.data.orders.find((o) => o._id === id) || null;
     },
-    enabled: !!user, // only run if user exists
+    enabled: !!user,
   });
 
-  // Payment mutation
   const payMutation = useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error("Unauthorized");
       const token = await user.getIdToken();
       await axios.put(`http://localhost:5000/api/users/pay/${id}`, {}, {
         headers: { Authorization: `Bearer ${token}` },
@@ -36,17 +33,11 @@ const Payment = () => {
     },
     onSuccess: () => {
       toast.success("Payment successful 🎉");
-      // update cache so order status/paymentStatus is updated
-      queryClient.setQueryData(["order", id], (old) => ({
-        ...old,
-        paymentStatus: "paid",
-      }));
+      queryClient.setQueryData(["order", id], (old) => ({ ...old, paymentStatus: "paid" }));
       queryClient.invalidateQueries(["myOrders", user?.email]);
       navigate("/dashboard/my-orders");
     },
-    onError: () => {
-      toast.error("Payment failed ❌");
-    },
+    onError: () => toast.error("Payment failed ❌"),
   });
 
   if (isLoading) return <p className="text-center mt-10">Loading...</p>;
@@ -64,11 +55,7 @@ const Payment = () => {
       <button
         onClick={() => payMutation.mutate()}
         disabled={order.paymentStatus === "paid" || order.status === "cancelled"}
-        className={`mt-6 w-full py-2 px-4 rounded-md text-white ${
-          order.paymentStatus === "paid" || order.status === "cancelled"
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-green-500 hover:bg-green-600"
-        }`}
+        className={`mt-6 w-full py-2 px-4 rounded-md text-white ${order.paymentStatus === "paid" || order.status === "cancelled" ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"}`}
       >
         {order.paymentStatus === "paid" ? "Already Paid ✔" : "Pay Now"}
       </button>

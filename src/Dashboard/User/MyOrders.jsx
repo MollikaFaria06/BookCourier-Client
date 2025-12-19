@@ -8,7 +8,6 @@ const MyOrders = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Fetch user's orders
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["myOrders", user?.email],
     queryFn: async () => {
@@ -19,20 +18,18 @@ const MyOrders = () => {
       });
       return res.data.orders;
     },
-    enabled: !!user, // only run if user exists
+    enabled: !!user,
   });
 
-  // Mutation for cancel/pay order
   const updateOrder = useMutation({
     mutationFn: async ({ id, action }) => {
-      if (!user) throw new Error("Unauthorized");
       const token = await user.getIdToken();
-      const url = `http://localhost:5000/api/users/${action}/${id}`;
-      await axios.put(url, {}, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.put(`http://localhost:5000/api/users/${action}/${id}`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return { id, action };
     },
     onSuccess: ({ id, action }) => {
-      // update cached orders after mutation
       queryClient.setQueryData(["myOrders", user?.email], (old) =>
         old.map((o) =>
           o._id === id
@@ -46,10 +43,7 @@ const MyOrders = () => {
       );
       toast.success(`Order ${action === "cancel" ? "cancelled" : "paid"} successfully`);
     },
-    onError: (err) => {
-      console.error(err);
-      toast.error("Failed to update order");
-    },
+    onError: () => toast.error("Failed to update order"),
   });
 
   if (isLoading) return <p className="text-center mt-10">Loading orders...</p>;
@@ -76,18 +70,8 @@ const MyOrders = () => {
             <td className="flex gap-2">
               {o.status === "pending" && o.paymentStatus !== "paid" && (
                 <>
-                  <button
-                    className="btn btn-sm btn-error"
-                    onClick={() => updateOrder.mutate({ id: o._id, action: "cancel" })}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="btn btn-sm btn-success"
-                    onClick={() => updateOrder.mutate({ id: o._id, action: "pay" })}
-                  >
-                    Pay Now
-                  </button>
+                  <button className="btn btn-sm btn-error" onClick={() => updateOrder.mutate({ id: o._id, action: "cancel" })}>Cancel</button>
+                  <button className="btn btn-sm btn-success" onClick={() => updateOrder.mutate({ id: o._id, action: "pay" })}>Pay Now</button>
                 </>
               )}
             </td>

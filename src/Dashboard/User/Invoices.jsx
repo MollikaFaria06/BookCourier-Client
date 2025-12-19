@@ -9,7 +9,6 @@ const Invoices = () => {
 
   useEffect(() => {
     if (!user) return;
-
     const fetchInvoices = async () => {
       try {
         const token = await user.getIdToken();
@@ -20,18 +19,16 @@ const Invoices = () => {
         if (data.success) setInvoices(data.invoices);
         else toast.error(data.message);
       } catch (err) {
-        console.error(err);
         toast.error("Failed to fetch invoices");
       } finally {
         setLoading(false);
       }
     };
-
     fetchInvoices();
   }, [user]);
 
   if (loading) return <p className="text-center mt-10">Loading invoices...</p>;
-  if (invoices.length === 0) return <p className="text-center mt-10">No payments found.</p>;
+  if (!invoices.length) return <p className="text-center mt-10">No payments found.</p>;
 
   return (
     <table className="min-w-full border">
