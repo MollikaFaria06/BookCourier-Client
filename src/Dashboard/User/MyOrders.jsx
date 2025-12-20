@@ -1,77 +1,101 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const MyOrders = () => {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const { data: orders = [], isLoading } = useQuery({
-    queryKey: ["myOrders", user?.email],
-    queryFn: async () => {
-      if (!user) return [];
-      const token = await user.getIdToken();
-      const res = await axios.get("http://localhost:5000/api/users/my-orders", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return res.data.orders;
-    },
-    enabled: !!user,
-  });
+  // Fetch orders
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (!user) return;
+      try {
+        const token = await user.getIdToken(); // fresh Firebase token
+        const res = await axios.get(
+          "http://localhost:5000/api/users/my-orders",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setOrders(res.data.orders);
+      } catch (err) {
+        console.error("Failed to fetch orders:", err.response?.data || err.message);
+        toast.error("Failed to load orders");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
+  }, [user]);
 
-  const updateOrder = useMutation({
-    mutationFn: async ({ id, action }) => {
+  // Cancel order
+  const handleCancel = async (orderId) => {
+    try {
       const token = await user.getIdToken();
-      await axios.put(`http://localhost:5000/api/users/${action}/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return { id, action };
-    },
-    onSuccess: ({ id, action }) => {
-      queryClient.setQueryData(["myOrders", user?.email], (old) =>
-        old.map((o) =>
-          o._id === id
-            ? {
-                ...o,
-                status: action === "cancel" ? "cancelled" : o.status,
-                paymentStatus: action === "pay" ? "paid" : o.paymentStatus,
-              }
-            : o
+      await axios.put(
+        `http://localhost:5000/api/users/cancel/${orderId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setOrders((prev) =>
+        prev.map((o) =>
+          o._id === orderId ? { ...o, status: "cancelled" } : o
         )
       );
-      toast.success(`Order ${action === "cancel" ? "cancelled" : "paid"} successfully`);
-    },
-    onError: () => toast.error("Failed to update order"),
-  });
+      toast.success("Order cancelled successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to cancel order");
+    }
+  };
 
-  if (isLoading) return <p className="text-center mt-10">Loading orders...</p>;
+  // Pay now
+  const handlePay = (orderId) => {
+    // navigate to payment page for this order
+    navigate(`/dashboard/user/payment/${orderId}`);
+  };
+
+  if (loading) return <p className="text-center mt-10">Loading orders...</p>;
   if (orders.length === 0) return <p className="text-center mt-10">No orders found</p>;
 
   return (
-    <table className="min-w-full border">
-      <thead>
+    <table className="min-w-full border border-gray-300">
+      <thead className="bg-gray-200">
         <tr>
-          <th>Book</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th>Payment</th>
-          <th>Actions</th>
+          <th className="p-2 border">Book Title</th>
+          <th className="p-2 border">Order Date</th>
+          <th className="p-2 border">Status</th>
+          <th className="p-2 border">Payment</th>
+          <th className="p-2 border">Actions</th>
         </tr>
       </thead>
       <tbody>
         {orders.map((o) => (
           <tr key={o._id}>
-            <td>{o.bookTitle}</td>
-            <td>${o.price}</td>
-            <td>{o.status}</td>
-            <td>{o.paymentStatus}</td>
-            <td className="flex gap-2">
+            <td className="p-2 border">{o.bookTitle}</td>
+            <td className="p-2 border">{new Date(o.createdAt).toLocaleString()}</td>
+            <td className="p-2 border">{o.status}</td>
+            <td className="p-2 border">{o.paymentStatus}</td>
+            <td className="p-2 border flex gap-2">
               {o.status === "pending" && o.paymentStatus !== "paid" && (
                 <>
-                  <button className="btn btn-sm btn-error" onClick={() => updateOrder.mutate({ id: o._id, action: "cancel" })}>Cancel</button>
-                  <button className="btn btn-sm btn-success" onClick={() => updateOrder.mutate({ id: o._id, action: "pay" })}>Pay Now</button>
+                  <button
+                    className="bg-red-500 text-white px-2 py-1 rounded"
+                    onClick={() => handleCancel(o._id)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-green-500 text-white px-2 py-1 rounded"
+                    onClick={() => handlePay(o._id)}
+                  >
+                    Pay Now
+                  </button>
                 </>
               )}
             </td>

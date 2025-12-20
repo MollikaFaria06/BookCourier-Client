@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { getAuth } from "firebase/auth";
 
 const AddBook = () => {
   const [book, setBook] = useState({
@@ -37,8 +38,14 @@ const AddBook = () => {
         imageUrl = res.data.data.url;
       }
 
-      // 2️⃣ Send JSON to backend
-      const token = localStorage.getItem("token");
+      // 2️⃣ Get fresh Firebase token
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) throw new Error("User not logged in");
+      const token = await user.getIdToken(true); // force refresh
+      localStorage.setItem("token", token);
+
+      // 3️⃣ Send JSON to backend
       await axios.post(
         `${import.meta.env.VITE_API_URL}/books`,
         {
@@ -55,10 +62,17 @@ const AddBook = () => {
       );
 
       alert("Book added successfully!");
-      setBook({ title: "", author: "", price: "", status: "published", description: "", imageFile: null });
+      setBook({
+        title: "",
+        author: "",
+        price: "",
+        status: "published",
+        description: "",
+        imageFile: null,
+      });
     } catch (err) {
       console.error(err);
-      alert("Failed to add book.");
+      alert("Failed to add book: " + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
     }
@@ -95,7 +109,12 @@ const AddBook = () => {
           required
           className="w-full border px-3 py-2 rounded"
         />
-        <select name="status" value={book.status} onChange={handleChange} className="w-full border px-3 py-2 rounded">
+        <select
+          name="status"
+          value={book.status}
+          onChange={handleChange}
+          className="w-full border px-3 py-2 rounded"
+        >
           <option value="published">Published</option>
           <option value="unpublished">Unpublished</option>
         </select>
@@ -108,7 +127,11 @@ const AddBook = () => {
         />
         <input type="file" onChange={handleImageChange} />
         {book.imageFile && (
-          <img src={URL.createObjectURL(book.imageFile)} alt="Book" className="w-32 h-32 mt-2" />
+          <img
+            src={URL.createObjectURL(book.imageFile)}
+            alt="Book"
+            className="w-32 h-32 mt-2"
+          />
         )}
         <button
           type="submit"

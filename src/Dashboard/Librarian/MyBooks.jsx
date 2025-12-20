@@ -1,37 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { getAuth } from "firebase/auth";
 
 const MyBooks = () => {
   const [books, setBooks] = useState([]);
   const navigate = useNavigate();
 
+  const getToken = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not logged in");
+    const token = await user.getIdToken(true); // fresh token
+    localStorage.setItem("token", token);
+    return token;
+  };
+
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const token = localStorage.getItem("accessToken");
-        const res = await axios.get(`${process.env.VITE_API_URL}/librarian/my-books`, {
+        const token = await getToken();
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/librarian/my-books`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBooks(res.data.books);
       } catch (err) {
-        console.error(err);
+        console.error("Fetch books failed:", err.response?.data || err.message);
       }
     };
     fetchBooks();
   }, []);
 
-  const handleUnpublish = async (id) => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      await axios.patch(`${process.env.VITE_API_URL}/librarian/books/${id}`, { status: "unpublished" }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBooks(books.map(b => (b._id === id ? { ...b, status: "unpublished" } : b)));
-    } catch (err) {
-      console.error(err);
-    }
-  };
+   const handleUnpublish = async (id) => {
+  try {
+    const token = await getToken();
+    await axios.patch(
+      `${import.meta.env.VITE_API_URL}/librarian/books/${id}`,
+      { status: "unpublished" },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setBooks(books.map(b => (b._id === id ? { ...b, status: "unpublished" } : b)));
+  } catch (err) {
+    console.error("Unpublish failed:", err.response?.data || err.message);
+  }
+};
+
 
   const handleEdit = (id) => navigate(`/dashboard/librarian/edit-book/${id}`);
 
@@ -51,14 +64,26 @@ const MyBooks = () => {
         <tbody>
           {books.map(book => (
             <tr key={book._id}>
-              <td className="p-2 border"><img src={book.image} alt={book.name} className="w-16 h-16" /></td>
-              <td className="p-2 border">{book.name}</td>
+              <td className="p-2 border">
+                <img src={book.image} alt={book.title} className="w-16 h-16" />
+              </td>
+              <td className="p-2 border">{book.title}</td>
               <td className="p-2 border">{book.author}</td>
               <td className="p-2 border">{book.status}</td>
               <td className="p-2 border">
-                <button onClick={() => handleEdit(book._id)} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2">Edit</button>
+                <button
+                  onClick={() => handleEdit(book._id)}
+                  className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
+                >
+                  Edit
+                </button>
                 {book.status === "published" && (
-                  <button onClick={() => handleUnpublish(book._id)} className="bg-red-500 text-white px-2 py-1 rounded">Unpublish</button>
+                  <button
+                    onClick={() => handleUnpublish(book._id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded"
+                  >
+                    Unpublish
+                  </button>
                 )}
               </td>
             </tr>

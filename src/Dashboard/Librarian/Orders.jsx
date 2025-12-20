@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { getAuth } from "firebase/auth";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
 
+  const getToken = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not logged in");
+    const token = await user.getIdToken(true);
+    localStorage.setItem("token", token);
+    return token;
+  };
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const token = localStorage.getItem("accessToken");
-        const res = await axios.get(`${process.env.VITE_API_URL}/librarian/orders`, {
+        const token = await getToken();
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/librarian/orders`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(res.data.orders);
       } catch (err) {
-        console.error(err);
+        console.error("Fetch orders failed:", err.response?.data || err.message);
       }
     };
     fetchOrders();
@@ -21,25 +31,25 @@ const Orders = () => {
 
   const handleCancel = async (id) => {
     try {
-      const token = localStorage.getItem("accessToken");
-      await axios.patch(`${process.env.VITE_API_URL}/librarian/orders/${id}/cancel`, {}, {
+      const token = await getToken();
+      await axios.patch(`${import.meta.env.VITE_API_URL}/librarian/orders/${id}/cancel`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(orders.map(o => (o._id === id ? { ...o, status: "cancelled" } : o)));
     } catch (err) {
-      console.error(err);
+      console.error("Cancel order failed:", err.response?.data || err.message);
     }
   };
 
   const handleStatusChange = async (id, status) => {
     try {
-      const token = localStorage.getItem("accessToken");
-      await axios.patch(`${process.env.REACT_APP_API_URL}/librarian/orders/${id}/status`, { status }, {
+      const token = await getToken();
+      await axios.patch(`${import.meta.env.VITE_API_URL}/librarian/orders/${id}/status`, { status }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(orders.map(o => (o._id === id ? { ...o, status } : o)));
     } catch (err) {
-      console.error(err);
+      console.error("Update status failed:", err.response?.data || err.message);
     }
   };
 
@@ -66,15 +76,27 @@ const Orders = () => {
               <td className="p-2 border">{order.userName}</td>
               <td className="p-2 border">
                 {order.status !== "cancelled" ? (
-                  <select value={order.status} onChange={(e) => handleStatusChange(order._id, e.target.value)} className="border px-2 py-1 rounded">
-                    {statusOptions.filter(s => (order.status === "pending" && s !== "delivered") || order.status === "shipped" || s === order.status)
-                      .map(s => <option key={s} value={s}>{s}</option>)}
+                  <select
+                    value={order.status}
+                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                    className="border px-2 py-1 rounded"
+                  >
+                    {statusOptions.filter(s => {
+                      if (order.status === "pending") return s !== "delivered";
+                      if (order.status === "shipped") return s !== "pending";
+                      return s === order.status;
+                    }).map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 ) : "Cancelled"}
               </td>
               <td className="p-2 border">
                 {order.status === "pending" && (
-                  <button onClick={() => handleCancel(order._id)} className="bg-red-500 text-white px-2 py-1 rounded">Cancel</button>
+                  <button
+                    onClick={() => handleCancel(order._id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded"
+                  >
+                    Cancel
+                  </button>
                 )}
               </td>
             </tr>
