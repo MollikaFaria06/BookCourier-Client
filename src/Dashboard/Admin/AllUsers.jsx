@@ -33,10 +33,10 @@ const AllUsers = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-yellow-500">All the users who logged-in/registered in this website</h2>
+      <h2 className="text-3xl  font-bold mb-6 text-yellow-500"> 📚 All  Users are here</h2>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-secondary border rounded-lg shadow-md">
+      <div className="overflow-x-auto ">
+        <table className="min-w-full bg-secondary text-black border rounded-lg shadow-md">
           <thead className="bg-purple-800 text-white">
             <tr>
               <th className="py-3 px-6 text-left">Name</th>

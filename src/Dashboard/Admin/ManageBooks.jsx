@@ -43,9 +43,9 @@ const ManageBooks = () => {
     <div className="p-6">
       <h2 className="text-3xl font-bold mb-6 text-center">📚 Manage Books</h2>
 
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
-        <table className="min-w-full border border-gray-200">
-          <thead className="bg-gray-100">
+      <div className="overflow-x-auto bg-primary rounded-lg shadow">
+        <table className="min-w-full border border-secondary">
+          <thead className="bg-purple-800 ">
             <tr>
               <th className="p-3 border text-left">#</th>
               <th className="p-3 border text-left">Title</th>
@@ -69,7 +69,7 @@ const ManageBooks = () => {
               books.map((b, index) => (
                 <tr
                   key={b._id}
-                  className="hover:bg-gray-50 transition"
+                  className="hover:bg-green-500 transition "
                 >
                   <td className="p-3 border">{index + 1}</td>
                   <td className="p-3 border font-medium">{b.title}</td>

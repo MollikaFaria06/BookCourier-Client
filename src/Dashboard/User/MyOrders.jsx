@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import axios from "axios";
+import { auth } from "../../firebase/firebase.config"; // import Firebase auth
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import toast from "react-hot-toast";
 
 const MyOrders = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,15 +12,17 @@ const MyOrders = () => {
   // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!user) return;
+      const firebaseUser = auth.currentUser;
+      if (!firebaseUser) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const token = await user.getIdToken(); // fresh Firebase token
-        const res = await axios.get(
-          "http://localhost:5000/api/users/my-orders",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const token = await firebaseUser.getIdToken(); // get Firebase token
+        const res = await axios.get("http://localhost:5000/users/my-orders", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setOrders(res.data.orders);
       } catch (err) {
         console.error("Failed to fetch orders:", err.response?.data || err.message);
@@ -30,23 +31,27 @@ const MyOrders = () => {
         setLoading(false);
       }
     };
+
     fetchOrders();
-  }, [user]);
+  }, []);
 
   // Cancel order
   const handleCancel = async (orderId) => {
+    const firebaseUser = auth.currentUser;
+    if (!firebaseUser) return;
+
     try {
-      const token = await user.getIdToken();
+      const token = await firebaseUser.getIdToken();
       await axios.put(
-        `http://localhost:5000/api/users/cancel/${orderId}`,
+        `http://localhost:5000/users/cancel/${orderId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setOrders((prev) =>
-        prev.map((o) =>
-          o._id === orderId ? { ...o, status: "cancelled" } : o
-        )
+        prev.map((o) => (o._id === orderId ? { ...o, status: "cancelled" } : o))
       );
+
       toast.success("Order cancelled successfully");
     } catch (err) {
       console.error(err);
@@ -56,16 +61,18 @@ const MyOrders = () => {
 
   // Pay now
   const handlePay = (orderId) => {
-    // navigate to payment page for this order
     navigate(`/dashboard/user/payment/${orderId}`);
   };
 
   if (loading) return <p className="text-center mt-10">Loading orders...</p>;
-  if (orders.length === 0) return <p className="text-center mt-10">No orders found</p>;
+  if (orders.length === 0)
+    return <p className="text-center mt-10">No orders found</p>;
 
   return (
-    <table className="min-w-full border border-gray-300">
-      <thead className="bg-gray-200">
+    <div>
+      <h2 className=" font-bold text-3xl text-center mt-8">My Orders are Here </h2>
+      <table className="min-w-full border border-sky-300 text-white bg-purple-800 mt-8">
+      <thead className="bg-primary">
         <tr>
           <th className="p-2 border">Book Title</th>
           <th className="p-2 border">Order Date</th>
@@ -78,7 +85,9 @@ const MyOrders = () => {
         {orders.map((o) => (
           <tr key={o._id}>
             <td className="p-2 border">{o.bookTitle}</td>
-            <td className="p-2 border">{new Date(o.createdAt).toLocaleString()}</td>
+            <td className="p-2 border">
+              {new Date(o.createdAt).toLocaleString()}
+            </td>
             <td className="p-2 border">{o.status}</td>
             <td className="p-2 border">{o.paymentStatus}</td>
             <td className="p-2 border flex gap-2">
@@ -103,6 +112,9 @@ const MyOrders = () => {
         ))}
       </tbody>
     </table>
+        
+    </div>
+    
   );
 };
 
