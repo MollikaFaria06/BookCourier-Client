@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     setUser((prev) => ({ ...prev, name: displayName, photoURL }));
   };
 
-  // Firebase login
+  // Firebase login (email/password only)
   const login = async (email, password) => {
     setLoading(true);
     try {
@@ -46,18 +46,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Login + Backend auto-create + role
+  // Login with backend + Firebase token
   const loginWithBackend = async (email, password) => {
     setLoading(true);
     try {
-      //  Firebase login
+      // Firebase login
       const result = await signInWithEmailAndPassword(auth, email, password);
       const firebaseUser = result.user;
 
-      //  Get ID token
+      // Get token & save in localStorage
       const token = await firebaseUser.getIdToken();
+      localStorage.setItem("token", token);
 
-      //  Call backend
+      // Backend call
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/firebase-login`, {
         method: "POST",
         headers: {
@@ -65,15 +66,12 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          user: {
-            name: firebaseUser.displayName,
-            picture: firebaseUser.photoURL,
-          },
+          user: { name: firebaseUser.displayName, picture: firebaseUser.photoURL },
         }),
       });
 
       const data = await res.json();
-      if (!data.success) throw new Error("Backend login failed");
+      if (!data.success) throw new Error(data.message || "Backend login failed");
 
       const appUser = {
         uid: firebaseUser.uid,
@@ -94,7 +92,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Google login (default user)
+  // Google login
   const signInGoogle = async () => {
     setLoading(true);
     try {
@@ -102,10 +100,11 @@ export const AuthProvider = ({ children }) => {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
-      // Get token
+      // Get token & save
       const token = await firebaseUser.getIdToken();
+      localStorage.setItem("token", token);
 
-      // Backend auto-create
+      // Backend call
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/firebase-login`, {
         method: "POST",
         headers: {
@@ -144,6 +143,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await signOut(auth);
       setUser(null);
+      localStorage.removeItem("token");
     } finally {
       setLoading(false);
     }

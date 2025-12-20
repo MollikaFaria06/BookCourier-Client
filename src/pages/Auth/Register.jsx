@@ -1,3 +1,4 @@
+// src/pages/Auth/Register.jsx
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../contexts/AuthContext";
@@ -8,7 +9,7 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 
 const Register = () => {
-  const { registerUser: firebaseRegister, updateUserProfile } = useAuth();
+  const { registerUser: firebaseRegister, updateUserProfile, loginWithBackend } = useAuth();
   const { register, handleSubmit, formState: { errors } } = useForm();
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,9 +26,11 @@ const Register = () => {
   const handleRegistration = async (data) => {
     setLoading(true);
     try {
+      // Firebase register
       const result = await firebaseRegister(data.email, data.password);
       const firebaseUser = result.user;
 
+      // Upload profile photo if provided
       let photoURL = "";
       if (data.photo && data.photo[0]) {
         const formData = new FormData();
@@ -39,29 +42,21 @@ const Register = () => {
         photoURL = res.data.data.url;
       }
 
+      // Update Firebase profile
       await updateUserProfile({ displayName: data.name, photoURL });
 
-      const token = await firebaseUser.getIdToken();
-
-      const backendRes = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/firebase-login`,
-        { user: { name: data.name, picture: photoURL } },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (!backendRes.data.success) {
-        throw new Error("Backend registration failed");
-      }
+      // Login with backend to auto-create user and get role
+      const appUser = await loginWithBackend(data.email, data.password);
 
       await Swal.fire({
         icon: "success",
         title: "Registration Successful!",
-        text: "Welcome to BookCourier!",
+        text: `Welcome, ${appUser.name || "User"}!`,
         timer: 2000,
         showConfirmButton: false,
       });
 
-      navigate("/", { replace: true });
+      navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -95,9 +90,7 @@ const Register = () => {
                 className="input text-black input-bordered w-full"
               />
               {errors.name && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
               )}
             </div>
 
@@ -105,7 +98,11 @@ const Register = () => {
               <label className="label">
                 <span className="label-text text-black">Profile Photo</span>
               </label>
-              <input type="file" {...register("photo")} className="file-input w-full text-black" />
+              <input
+                type="file"
+                {...register("photo")}
+                className="file-input w-full text-black"
+              />
             </div>
 
             <div>
@@ -119,9 +116,7 @@ const Register = () => {
                 className="input text-black input-bordered w-full"
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
               )}
             </div>
 
@@ -150,9 +145,7 @@ const Register = () => {
                 )}
               </button>
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
               )}
             </div>
 
@@ -167,11 +160,7 @@ const Register = () => {
 
           <p className="text-center text-sm mt-2">
             Already have an account?{" "}
-            <Link
-              to="/auth/login"
-              state={location.state}
-              className="text-secondary underline"
-            >
+            <Link to="/auth/login" state={location.state} className="text-secondary underline">
               Login
             </Link>
           </p>

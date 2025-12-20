@@ -26,6 +26,7 @@ const Login = () => {
     try {
       const user = await loginWithBackend(data.email, data.password);
 
+      // Success toast
       await Swal.fire({
         icon: "success",
         title: "Login Successful!",
@@ -34,7 +35,7 @@ const Login = () => {
         showConfirmButton: false,
       });
 
-      navigate("/", { replace: true });
+      navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -68,9 +69,7 @@ const Login = () => {
                 className="input text-black input-bordered w-full"
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
               )}
             </div>
 
@@ -99,9 +98,7 @@ const Login = () => {
                 )}
               </button>
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
               )}
             </div>
 
@@ -116,11 +113,7 @@ const Login = () => {
 
           <p className="text-center text-sm mt-2">
             New to BookCourier?{" "}
-            <Link
-              to="/auth/register"
-              state={location.state}
-              className="text-secondary underline"
-            >
+            <Link to="/auth/register" state={location.state} className="text-secondary underline">
               Register
             </Link>
           </p>

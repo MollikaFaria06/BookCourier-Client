@@ -29,7 +29,7 @@ const SocialLogin = () => {
         showConfirmButton: false,
       });
 
-      navigate("/", { replace: true });
+      navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
       Swal.fire({
