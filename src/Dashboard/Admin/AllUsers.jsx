@@ -6,16 +6,13 @@ const AllUsers = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("TOKEN 👉", token);
 
-    axios.get("http://localhost:5000/admin/users", {
+    axios
+      .get("http://localhost:5000/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => {
-        console.log("ADMIN USERS RESPONSE 👉", res.data);
-        setUsers(res.data.users || []);
-      })
-      .catch((err) => console.error("ADMIN USERS ERROR 👉", err));
+      .then((res) => setUsers(res.data.users || []))
+      .catch((err) => console.error(err));
   }, []);
 
   const changeRole = (id, role) => {
@@ -26,53 +23,77 @@ const AllUsers = () => {
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       )
       .then(() => {
-        setUsers((prev) => prev.map((u) => (u._id === id ? { ...u, role } : u)));
+        setUsers((prev) =>
+          prev.map((u) => (u._id === id ? { ...u, role } : u))
+        );
       });
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl  font-bold mb-6 text-yellow-500"> 📚 All  Users are here</h2>
+    <div className="p-4 sm:p-6 lg:p-8">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-yellow-500 flex items-center gap-2">
+        📚 All Users
+      </h2>
 
-      <div className="overflow-x-auto ">
-        <table className="min-w-full bg-secondary text-black border rounded-lg shadow-md">
-          <thead className="bg-purple-800 text-white">
+      <div className="overflow-x-auto rounded-lg shadow-lg border border-gray-200">
+        <table className="min-w-full bg-white text-gray-800">
+          <thead className="bg-gradient-to-r from-purple-700 to-purple-900 text-white">
             <tr>
-              <th className="py-3 px-6 text-left">Name</th>
-              <th className="py-3 px-6 text-left">Email</th>
-              <th className="py-3 px-6 text-left">Role</th>
-              <th className="py-3 px-6 text-left">Actions</th>
+              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">
+                Name
+              </th>
+              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">
+                Email
+              </th>
+              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">
+                Role
+              </th>
+              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
-              <tr key={u._id} className="border-b hover:bg-primary">
-                <td className="py-3 px-6">{u.name}</td>
-                <td className="py-3 px-6">{u.email}</td>
-                <td className="py-3 px-6 capitalize">{u.role}</td>
-                <td className="py-3 px-6 flex gap-2">
-                  {u.role !== "librarian" && (
-                    <button
-                      onClick={() => changeRole(u._id, "librarian")}
-                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors text-sm"
-                    >
-                      Make Librarian
-                    </button>
-                  )}
-                  {u.role !== "admin" && (
-                    <button
-                      onClick={() => changeRole(u._id, "admin")}
-                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors text-sm"
-                    >
-                      Make Admin
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {users.length === 0 && (
+            {users.length > 0 ? (
+              users.map((u, index) => (
+                <tr
+                  key={u._id}
+                  className={`border-b hover:bg-gray-50 transition-colors ${
+                    index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                  }`}
+                >
+                  <td className="py-2 sm:py-4 px-3 sm:px-6 font-medium text-sm sm:text-base">
+                    {u.name}
+                  </td>
+                  <td className="py-2 sm:py-4 px-3 sm:px-6 text-sm sm:text-base">
+                    {u.email}
+                  </td>
+                  <td className="py-2 sm:py-4 px-3 sm:px-6 capitalize text-sm sm:text-base">
+                    {u.role}
+                  </td>
+                  <td className="py-2 sm:py-4 px-3 sm:px-6 flex flex-wrap gap-2 text-sm sm:text-base">
+                    {u.role !== "librarian" && (
+                      <button
+                        onClick={() => changeRole(u._id, "librarian")}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-2 sm:px-3 py-1 rounded shadow transition text-xs sm:text-sm"
+                      >
+                        Make Librarian
+                      </button>
+                    )}
+                    {u.role !== "admin" && (
+                      <button
+                        onClick={() => changeRole(u._id, "admin")}
+                        className="bg-green-500 hover:bg-green-600 text-white px-2 sm:px-3 py-1 rounded shadow transition text-xs sm:text-sm"
+                      >
+                        Make Admin
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
-                <td colSpan="4" className="text-center py-4 text-gray-500">
+                <td colSpan="4" className="text-center py-6 text-gray-400 text-sm sm:text-base">
                   No users found.
                 </td>
               </tr>

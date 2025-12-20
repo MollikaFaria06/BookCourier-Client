@@ -51,7 +51,7 @@ const Navbar = () => {
   );
 
   return (
-    <div className="bg-gradient-to-r from-black to-purple-900 shadow-md text-white">
+    <div className="sticky top-0 z-50 bg-gradient-to-r from-black to-purple-900 shadow-md text-white">
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
         {/* Navbar Start */}
         <div className="flex items-center gap-4">

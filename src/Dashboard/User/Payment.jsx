@@ -61,12 +61,12 @@ const Payment = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 via-pink-400 to-red-400">
-      <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md text-center">
-        <h2 className="text-3xl font-bold mb-4 text-purple-700">
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md p-10 rounded-2xl shadow-2xl bg-gradient-to-br from-purple-800 via-pink-800 to-indigo-800 text-white">
+        <h2 className="text-3xl font-bold mb-4 text-center">
           Complete Your Payment
         </h2>
-        <p className="mb-8 text-gray-600">
+        <p className="mb-8 text-gray-200 text-center">
           You are about to pay for your order. Click the button below to proceed.
         </p>
         <div className="flex justify-center gap-4">

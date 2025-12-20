@@ -184,7 +184,7 @@ const DashboardHome = () => {
         {/* Orders Chart */}
         {ordersData.length > 0 && (
           <div className="p-4 bg-white dark:bg-slate-800 rounded shadow">
-            <h3 className="text-lg font-bold mb-4">Orders Overview</h3>
+            <h3 className="text-lg font-bold mb-4 text-secondary">Orders Overview</h3>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={ordersData}>
                 <XAxis dataKey="status" />
