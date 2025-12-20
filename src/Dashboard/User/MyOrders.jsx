@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { auth } from "../../firebase/firebase.config"; // import Firebase auth
+import { auth } from "../../firebase/firebase.config";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2"; // ✅ SweetAlert import
 
 const MyOrders = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const MyOrders = () => {
       }
 
       try {
-        const token = await firebaseUser.getIdToken(); // get Firebase token
+        const token = await firebaseUser.getIdToken();
         const res = await axios.get("http://localhost:5000/users/my-orders", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -35,27 +36,40 @@ const MyOrders = () => {
     fetchOrders();
   }, []);
 
-  // Cancel order
+  // Cancel order with SweetAlert confirmation
   const handleCancel = async (orderId) => {
-    const firebaseUser = auth.currentUser;
-    if (!firebaseUser) return;
+    const confirm = await Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you really want to cancel this order?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, cancel it!',
+      cancelButtonText: 'No'
+    });
 
-    try {
-      const token = await firebaseUser.getIdToken();
-      await axios.put(
-        `http://localhost:5000/users/cancel/${orderId}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    if (confirm.isConfirmed) {
+      try {
+        const firebaseUser = auth.currentUser;
+        if (!firebaseUser) return;
 
-      setOrders((prev) =>
-        prev.map((o) => (o._id === orderId ? { ...o, status: "cancelled" } : o))
-      );
+        const token = await firebaseUser.getIdToken();
+        await axios.put(
+          `http://localhost:5000/users/cancel/${orderId}`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-      toast.success("Order cancelled successfully");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to cancel order");
+        setOrders((prev) =>
+          prev.map((o) => (o._id === orderId ? { ...o, status: "cancelled" } : o))
+        );
+
+        Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success');
+      } catch (err) {
+        console.error(err);
+        Swal.fire('Error', 'Failed to cancel order.', 'error');
+      }
     }
   };
 
@@ -64,57 +78,65 @@ const MyOrders = () => {
     navigate(`/dashboard/user/payment/${orderId}`);
   };
 
-  if (loading) return <p className="text-center mt-10">Loading orders...</p>;
+  if (loading) return <p className="text-center mt-10 text-gray-500">Loading orders...</p>;
   if (orders.length === 0)
-    return <p className="text-center mt-10">No orders found</p>;
+    return <p className="text-center mt-10 text-gray-500">No orders found</p>;
 
   return (
-    <div>
-      <h2 className=" font-bold text-3xl text-center mt-8">My Orders are Here </h2>
-      <table className="min-w-full border border-sky-300 text-white bg-purple-800 mt-8">
-      <thead className="bg-primary">
-        <tr>
-          <th className="p-2 border">Book Title</th>
-          <th className="p-2 border">Order Date</th>
-          <th className="p-2 border">Status</th>
-          <th className="p-2 border">Payment</th>
-          <th className="p-2 border">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {orders.map((o) => (
-          <tr key={o._id}>
-            <td className="p-2 border">{o.bookTitle}</td>
-            <td className="p-2 border">
-              {new Date(o.createdAt).toLocaleString()}
-            </td>
-            <td className="p-2 border">{o.status}</td>
-            <td className="p-2 border">{o.paymentStatus}</td>
-            <td className="p-2 border flex gap-2">
-              {o.status === "pending" && o.paymentStatus !== "paid" && (
-                <>
-                  <button
-                    className="bg-red-500 text-white px-2 py-1 rounded"
-                    onClick={() => handleCancel(o._id)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="bg-green-500 text-white px-2 py-1 rounded"
-                    onClick={() => handlePay(o._id)}
-                  >
-                    Pay Now
-                  </button>
-                </>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-        
+    <div className="px-4 md:px-10 lg:px-20 py-10">
+      <h2 className="text-3xl font-bold text-center text-purple-700 mb-8">My Orders</h2>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full shadow-lg rounded-lg overflow-hidden">
+          <thead className="bg-purple-700 text-white">
+            <tr>
+              <th className="py-3 px-6 text-left">Book Title</th>
+              <th className="py-3 px-6 text-left">Order Date</th>
+              <th className="py-3 px-6 text-left">Status</th>
+              <th className="py-3 px-6 text-left">Payment</th>
+              <th className="py-3 px-6 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((o, idx) => (
+              <tr
+                key={o._id}
+                className={`${idx % 2 === 0 ? "bg-base-300" : "bg-sky-200"} hover:bg-purple-400 transition`}
+              >
+                <td className="py-3 px-6 font-medium text-gray-800">{o.bookTitle}</td>
+                <td className="py-3 px-6 text-gray-600">
+                  {new Date(o.createdAt).toLocaleString()}
+                </td>
+                <td className={`py-3 px-6 font-semibold ${o.status === "pending" ? "text-yellow-500" : o.status === "cancelled" ? "text-red-500" : "text-green-500"}`}>
+                  {o.status}
+                </td>
+                <td className={`py-3 px-6 font-semibold ${o.paymentStatus === "unpaid" ? "text-red-500" : "text-green-500"}`}>
+                  {o.paymentStatus}
+                </td>
+                <td className="py-3 px-6 flex gap-2">
+                  {o.status === "pending" && o.paymentStatus !== "paid" && (
+                    <>
+                      <button
+                        onClick={() => handleCancel(o._id)}
+                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => handlePay(o._id)}
+                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-md transition"
+                      >
+                        Pay Now
+                      </button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-    
   );
 };
 

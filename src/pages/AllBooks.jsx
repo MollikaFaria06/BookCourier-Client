@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -18,10 +18,30 @@ const SkeletonCard = () => (
 );
 
 const AllBooks = () => {
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("default"); // default | low | high
+
   const { data: books, isLoading, isError, error } = useQuery({
     queryKey: ["books"],
     queryFn: fetchBooks,
   });
+
+  // ✅ search + sort applied here
+  const filteredBooks = useMemo(() => {
+    if (!books) return [];
+
+    let result = books.filter((b) =>
+      b.title.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (sort === "low") {
+      result = result.sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sort === "high") {
+      result = result.sort((a, b) => (b.price || 0) - (a.price || 0));
+    }
+
+    return result;
+  }, [books, search, sort]);
 
   if (isLoading)
     return (
@@ -39,41 +59,63 @@ const AllBooks = () => {
       </p>
     );
 
-  if (!books?.length)
-    return <p className="text-center mt-10">No books available.</p>;
-
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold text-center mt-5 mb-6">
         📚 All Books
       </h1>
 
-      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-        {books.map((b) => (
-          <div
-            key={b._id}
-            className="bg-white/10 rounded-lg overflow-hidden shadow-md p-3"
-          >
-            <img
-              src={b.image || "https://via.placeholder.com/200x280"}
-              alt={b.title}
-              className="w-full h-56 object-cover"
-            />
-            <h3 className="font-semibold mt-2">{b.title}</h3>
-            <p className="text-xs text-gray-400">{b.author}</p>
-            <p className="text-sm font-semibold mt-1">
-              ${b.price || 0}
-            </p>
+      {/* Search & Sort Controls */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-between items-center">
+        <input
+          type="text"
+          placeholder="Search by book name..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="input input-bordered w-full sm:max-w-xs text-black"
+        />
 
-            <Link
-              to={`/books/${b._id}`}
-              className="btn btn-sm btn-primary mt-3 w-full"
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="select select-bordered w-full sm:max-w-xs text-black"
+        >
+          <option value="default">Sort by Price</option>
+          <option value="low">Low to High</option>
+          <option value="high">High to Low</option>
+        </select>
+      </div>
+
+      {!filteredBooks.length ? (
+        <p className="text-center mt-10">No books found.</p>
+      ) : (
+        <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredBooks.map((b) => (
+            <div
+              key={b._id}
+              className="bg-white/10 rounded-lg overflow-hidden shadow-md p-3"
             >
-              Details
-            </Link>
-          </div>
-        ))}
-      </section>
+              <img
+                src={b.image || "https://via.placeholder.com/200x280"}
+                alt={b.title}
+                className="w-full h-56 object-cover"
+              />
+              <h3 className="font-semibold mt-2">{b.title}</h3>
+              <p className="text-xs text-gray-400">{b.author}</p>
+              <p className="text-sm font-semibold mt-1">
+                ${b.price || 0}
+              </p>
+
+              <Link
+                to={`/books/${b._id}`}
+                className="btn btn-sm btn-primary mt-3 w-full"
+              >
+                Details
+              </Link>
+            </div>
+          ))}
+        </section>
+      )}
     </div>
   );
 };

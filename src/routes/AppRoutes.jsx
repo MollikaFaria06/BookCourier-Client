@@ -31,7 +31,7 @@ export default function AppRoutes() {
     },
     { path: "/auth/login", element: <Login /> },
     { path: "/auth/register", element: <Register /> },
-    { path: "/dashboard/payment/:id", element: <Payment /> },
+    { path: "/dashboard/user/payment/:id", element: <Payment /> },
     { path: "*", element: <Navigate to="/" replace /> },
   ];
 
