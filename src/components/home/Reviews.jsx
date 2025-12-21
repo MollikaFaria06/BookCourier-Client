@@ -5,7 +5,6 @@ import "swiper/css/pagination";
 import "swiper/css/effect-coverflow";
 import ReviewCard from "./ReviewCard";
 
-
 const Reviews = ({ reviewsOrPromise }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +64,6 @@ const Reviews = ({ reviewsOrPromise }) => {
           setCanAutoplay(Boolean(Autoplay));
         }
       } catch (err) {
-        
         console.warn("Swiper modules unavailable — continuing without them.", err);
       }
     }
@@ -95,9 +93,14 @@ const Reviews = ({ reviewsOrPromise }) => {
   return (
     <section className="my-24 px-4">
       <div className="text-center mb-8 max-w-2xl mx-auto">
-        <h3 className="text-3xl font-bold mb-2">What Readers Say</h3>
+        {/* Transparent Gradient & Meaningful Heading */}
+        <h3 className="text-3xl sm:text-4xl font-extrabold mb-2
+                       bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400
+                       text-transparent bg-clip-text">
+          📖 What Our Readers Are Saying
+        </h3>
         <p className="text-gray-400 dark:text-gray-300">
-          Real feedback from our readers — updated regularly.
+          Real feedback from our readers — updated regularly
         </p>
       </div>
 

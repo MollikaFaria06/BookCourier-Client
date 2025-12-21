@@ -41,8 +41,15 @@ const CoverageMap = () => {
   return (
     <section className="py-12 relative">
       <Toaster position="top-right" reverseOrder={false} />
-      <h2 className="text-3xl font-bold mb-4">Coverage</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      {/* Meaningful Heading */}
+      <h2 className="text-3xl sm:text-4xl font-extrabold mb-6 text-center
+                     text-transparent bg-clip-text
+                     bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400">
+         Our Service Coverage & Request Your City
+      </h2>
+
+      <div className="grid grid-cols-1  gap-8 mt-12">
         <div className="lg:col-span-2 bg-white/5 rounded-xl overflow-hidden h-80 sm:h-96 shadow-inner">
           <iframe
             title="coverage-map"
@@ -54,13 +61,13 @@ const CoverageMap = () => {
         </div>
 
         <aside className="bg-secondary p-5 rounded-xl shadow-md">
-          <h3 className="font-semibold mb-3 text-xl">Cities we serve </h3>
+          <h3 className="font-semibold mb-3 text-xl">Cities We Serve</h3>
 
           {loading ? (
             <p className="text-gray-300">Loading cities...</p>
           ) : (
             <>
-              <div className="flex flex-wrap gap-2 mb-4 ">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {centers.slice(0, 40).map((c) => (
                   <button
                     key={c.district}

@@ -48,13 +48,14 @@ const Slider = () => {
                 backgroundPosition: "center",
               }}
             >
+              {/* Normal white overlay */}
               <div className="absolute inset-0 bg-black/40 flex items-center">
                 <div className="px-6 py-8 sm:py-12 max-w-2xl text-white">
                   <h3 className="text-xl sm:text-3xl font-bold">{s.title}</h3>
                   <p className="mt-2 text-sm sm:text-base max-w-xl">{s.desc}</p>
                   <Link
                     to="/books"
-                    className="mt-4 p-2 inline-block btn btn-primary"
+                    className="mt-4 inline-block px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-pink-700 transition"
                   >
                     See All Books
                   </Link>

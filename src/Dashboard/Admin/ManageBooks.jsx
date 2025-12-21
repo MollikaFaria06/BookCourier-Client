@@ -70,8 +70,13 @@ const ManageBooks = () => {
 
   return (
     <div className="p-4 md:p-6">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-yellow-500">
-        📚 Manage Books
+      {/* Transparent Gradient Heading */}
+      <h2
+        className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 text-center
+                   bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400
+                   text-transparent bg-clip-text flex items-center justify-center gap-2"
+      >
+        📚 Admin Panel: Manage Your Books
       </h2>
 
       <div className="overflow-x-auto rounded-lg shadow border border-gray-200 bg-teal-800 text-white">

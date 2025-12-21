@@ -41,8 +41,11 @@ const Invoices = () => {
 
   return (
     <div className="px-4 md:px-8 lg:px-16 py-10">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-purple-700 mb-8">
-        My Payments
+      {/* Transparent Gradient Heading */}
+      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-center mb-8
+                     bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400
+                     text-transparent bg-clip-text">
+        💳 My Payments
       </h2>
 
       <div className="overflow-x-auto rounded-lg shadow-lg border border-gray-200">

@@ -31,12 +31,12 @@ const DashboardHome = () => {
       fetch("http://localhost:5000/users/my-orders", {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data.success) {
-            const summary = ["pending", "paid", "cancelled"].map(status => ({
+            const summary = ["pending", "paid", "cancelled"].map((status) => ({
               status: status.charAt(0).toUpperCase() + status.slice(1),
-              count: data.orders.filter(o => o.status === status).length,
+              count: data.orders.filter((o) => o.status === status).length,
             }));
             setOrdersData(summary);
           }
@@ -48,20 +48,20 @@ const DashboardHome = () => {
       fetch("http://localhost:5000/librarian/my-books", {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data.success) {
             setBooksData(data.books);
 
             fetch("http://localhost:5000/librarian/orders", {
               headers: { Authorization: `Bearer ${token}` },
             })
-              .then(res => res.json())
-              .then(ord => {
+              .then((res) => res.json())
+              .then((ord) => {
                 if (ord.success) {
-                  const summary = ["pending", "paid", "cancelled"].map(status => ({
+                  const summary = ["pending", "paid", "cancelled"].map((status) => ({
                     status: status.charAt(0).toUpperCase() + status.slice(1),
-                    count: ord.orders.filter(o => o.status === status).length,
+                    count: ord.orders.filter((o) => o.status === status).length,
                   }));
                   setOrdersData(summary);
                 }
@@ -75,28 +75,28 @@ const DashboardHome = () => {
       fetch("http://localhost:5000/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data.success) setUsersCount(data.users.length);
         });
 
       fetch("http://localhost:5000/admin/books", {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data.success) setBooksData(data.books);
         });
 
       fetch("http://localhost:5000/orders", {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data.success) {
-            const summary = ["pending", "paid", "cancelled"].map(status => ({
+            const summary = ["pending", "paid", "cancelled"].map((status) => ({
               status: status.charAt(0).toUpperCase() + status.slice(1),
-              count: data.orders.filter(o => o.status === status).length,
+              count: data.orders.filter((o) => o.status === status).length,
             }));
             setOrdersData(summary);
           }
@@ -110,15 +110,15 @@ const DashboardHome = () => {
 
   return (
     <div className="p-4">
-      {/* Animated Welcome */}
-      <motion.h2
-        className="text-3xl text-primary font-bold mb-6"
+      {/* Beautiful Gradient Transparent Heading */}
+      <motion.h1
+        className="text-4xl sm:text-5xl font-extrabold text-center mb-6 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-500 text-transparent bg-clip-text"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        Welcome, {user.name}!
-      </motion.h2>
+        Welcome to Your Dashboard, {user.name}!
+      </motion.h1>
 
       {/* Dashboard Cards */}
       <motion.div
@@ -198,31 +198,29 @@ const DashboardHome = () => {
         )}
 
         {user.role === "admin" && (
-  <div className="p-6 bg-yellow-500 text-white rounded-2xl shadow-lg flex items-center justify-between">
-    <div>
-      <h3 className="text-2xl font-bold">Total Users</h3>
-      <p className="text-3xl text-center font-bold mt-2">{usersCount}</p>
-    </div>
-    {/* Optional icon */}
-    <div className="text-white text-4xl">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-12 w-12"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m0-4a4 4 0 11-8 0 4 4 0 018 0zm6 0a4 4 0 118 0 4 4 0 01-8 0z"
-        />
-      </svg>
-    </div>
-  </div>
-)}
-
+          <div className="p-6 bg-yellow-500 text-white rounded-2xl shadow-lg flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl font-bold">Total Users</h3>
+              <p className="text-3xl text-center font-bold mt-2">{usersCount}</p>
+            </div>
+            <div className="text-white text-4xl">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m0-4a4 4 0 11-8 0 4 4 0 018 0zm6 0a4 4 0 118 0 4 4 0 01-8 0z"
+                />
+              </svg>
+            </div>
+          </div>
+        )}
 
         {/* Books Chart */}
         {user.role !== "user" && booksData.length > 0 && (

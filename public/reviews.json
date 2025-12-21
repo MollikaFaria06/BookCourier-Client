@@ -6,7 +6,7 @@
     "delivery_email": "delivery1@bookcourier.com",
     "ratings": 4.8,
     "review": "Book arrived in perfect condition! Packaging was very neat and delivery was quick.",
-    "parcel_id": "order001",
+    "book_id": "order001",
     "pick_up_email": "pickup1@bookcourier.com",
     "user_photoURL": "https://randomuser.me/api/portraits/women/32.jpg",
     "date": "2024-05-10T11:45:00.000Z"
@@ -18,7 +18,7 @@
     "delivery_email": "delivery2@bookcourier.com",
     "ratings": 4.3,
     "review": "Great service. The delivery person was very polite. Will order again!",
-    "parcel_id": "order002",
+    "book_id": "order002",
     "pick_up_email": "pickup2@bookcourier.com",
     "user_photoURL": "https://randomuser.me/api/portraits/men/15.jpg",
     "date": "2024-06-03T09:20:00.000Z"
@@ -30,7 +30,7 @@
     "delivery_email": "delivery3@bookcourier.com",
     "ratings": 3.9,
     "review": "Delivery took a little longer, but the book was well-protected and undamaged.",
-    "parcel_id": "order003",
+    "book_id": "order003",
     "pick_up_email": "pickup3@bookcourier.com",
     "user_photoURL": "https://randomuser.me/api/portraits/women/10.jpg",
     "date": "2024-06-15T16:10:00.000Z"
@@ -42,7 +42,7 @@
     "delivery_email": "delivery4@bookcourier.com",
     "ratings": 5.0,
     "review": "Super fast delivery! Got my novel within 24 hours. Highly satisfied.",
-    "parcel_id": "order004",
+    "book_id": "order004",
     "pick_up_email": "pickup4@bookcourier.com",
     "user_photoURL": "https://randomuser.me/api/portraits/men/27.jpg",
     "date": "2024-07-01T13:00:00.000Z"
@@ -54,7 +54,7 @@
     "delivery_email": "delivery5@bookcourier.com",
     "ratings": 3.2,
     "review": "Packaging could be better. Book edges were slightly bent.",
-    "parcel_id": "order005",
+    "book_id": "order005",
     "pick_up_email": "pickup5@bookcourier.com",
     "user_photoURL": "https://randomuser.me/api/portraits/women/44.jpg",
     "date": "2024-07-22T17:30:00.000Z"
@@ -66,7 +66,7 @@
     "delivery_email": "delivery6@bookcourier.com",
     "ratings": 4.9,
     "review": "Amazing experience! Safe packaging and exact delivery time.",
-    "parcel_id": "order006",
+    "book_id": "order006",
     "pick_up_email": "pickup6@bookcourier.com",
     "user_photoURL": "https://randomuser.me/api/portraits/men/41.jpg",
     "date": "2024-08-05T08:45:00.000Z"
@@ -78,7 +78,7 @@
     "delivery_email": "delivery7@bookcourier.com",
     "ratings": 4.6,
     "review": "Loved the service! Updated tracking and fast delivery.",
-    "parcel_id": "order007",
+    "book_id": "order007",
     "pick_up_email": "pickup7@bookcourier.com",
     "user_photoURL": "https://randomuser.me/api/portraits/women/7.jpg",
     "date": "2024-08-14T15:20:00.000Z"
@@ -90,7 +90,7 @@
     "delivery_email": "delivery8@bookcourier.com",
     "ratings": 2.7,
     "review": "Delivery was late and no tracking updates were given. Needs improvement.",
-    "parcel_id": "order008",
+    "book_id": "order008",
     "pick_up_email": "pickup8@bookcourier.com",
     "user_photoURL": "https://randomuser.me/api/portraits/men/53.jpg",
     "date": "2024-08-22T19:10:00.000Z"

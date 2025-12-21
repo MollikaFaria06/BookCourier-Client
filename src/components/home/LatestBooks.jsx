@@ -12,10 +12,7 @@ const LatestBooks = () => {
         const data = await res.json();
         if (data.success) {
           const latest = data.books
-            .sort(
-              (a, b) =>
-                new Date(b.createdAt) - new Date(a.createdAt)
-            )
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, 6);
           setBooks(latest);
         }
@@ -41,9 +38,23 @@ const LatestBooks = () => {
 
   return (
     <section className="py-12 max-w-7xl mx-auto px-4">
+      {/* Heading with gradient text */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-bold">Latest Books</h2>
-        <Link to="/books" className="link text-sm">
+        <h2
+          className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text
+                     bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400"
+        >
+          📚 Explore the Latest Arrivals
+        </h2>
+
+        {/* Stylish "View all" button */}
+        <Link
+          to="/books"
+          className="inline-block px-4 py-2 text-sm font-semibold
+                     bg-gradient-to-r from-purple-500 to-pink-500
+                     text-white rounded-lg shadow-md hover:scale-105
+                     transition-transform duration-300"
+        >
           View all
         </Link>
       </div>
@@ -60,15 +71,9 @@ const LatestBooks = () => {
               className="w-full h-56 object-cover"
             />
             <div className="p-3">
-              <h3 className="font-semibold text-sm">
-                {b.title}
-              </h3>
-              <p className="text-xs text-gray-400">
-                {b.author}
-              </p>
-              <p className="text-sm font-medium mt-1">
-                ${b.price || 0}
-              </p>
+              <h3 className="font-semibold text-sm">{b.title}</h3>
+              <p className="text-xs text-gray-400">{b.author}</p>
+              <p className="text-sm font-medium mt-1">${b.price || 0}</p>
               <Link
                 to={`/books/${b._id}`}
                 className="btn btn-sm btn-primary w-full mt-3"

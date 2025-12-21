@@ -76,24 +76,24 @@ const BookDetails = () => {
     <>
       {/* Gradient Card */}
       <div className="px-4 py-10 flex justify-center">
-        <div className="w-full max-w-md sm:max-w-lg bg-gradient-to-br from-purple-800 via-pink-800 to-indigo-800 rounded-2xl shadow-2xl overflow-hidden">
-          <div className="p-5 sm:p-6 text-white">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-center mb-4">
+        <div className="w-full max-w-md sm:max-w-lg bg-gradient-to-br from-purple-700 via-pink-700 to-indigo-700 rounded-3xl shadow-2xl overflow-hidden">
+          <div className="p-6 sm:p-8 text-white">
+            {/* Beautiful Gradient Heading */}
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-5 bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 text-transparent bg-clip-text">
               📚 Book Details
             </h1>
 
             <img
               src={book.image || "https://via.placeholder.com/400x300"}
               alt={book.title}
-              className="w-full h-56 sm:h-64 object-cover rounded-xl mb-4 shadow"
+              className="w-full h-64 sm:h-72 object-cover rounded-xl mb-5 shadow-lg"
             />
 
-            <h2 className="text-xl sm:text-2xl font-bold">{book.title}</h2>
-            <p className="text-pink-200">Author: {book.author}</p>
+            <h2 className="text-2xl sm:text-3xl font-bold">{book.title}</h2>
+            <p className="text-pink-200 mt-1">Author: {book.author}</p>
 
-            <p className="mt-2 text-yellow-200">
-              Status:{" "}
-              <span className="font-semibold capitalize">{book.status}</span>
+            <p className="mt-3 text-yellow-200">
+              Status: <span className="font-semibold capitalize">{book.status}</span>
             </p>
 
             <p className="text-lg font-semibold mt-2 text-green-200">
@@ -102,7 +102,7 @@ const BookDetails = () => {
 
             <button
               onClick={() => setShowModal(true)}
-              className="mt-5 w-full py-2 rounded-lg bg-white text-purple-700 font-semibold hover:bg-purple-100 transition disabled:opacity-60"
+              className="mt-6 w-full py-3 rounded-xl bg-white text-purple-700 font-semibold hover:bg-purple-100 transition disabled:opacity-50"
               disabled={book.status !== "published"}
             >
               {book.status === "published" ? "Order Now" : "Pending Order"}
@@ -114,40 +114,42 @@ const BookDetails = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
-          <div className="bg-white text-black p-5 sm:p-6 rounded-xl w-full max-w-sm">
-            <h3 className="text-xl font-bold mb-4 text-center">Place Order</h3>
+          <div className="bg-white text-black p-6 rounded-2xl w-full max-w-sm shadow-2xl">
+            <h3 className="text-2xl font-bold mb-5 text-center text-purple-700">
+              Place Your Order
+            </h3>
 
             <input
               type="text"
               value={user?.name || ""}
               readOnly
-              className="input input-bordered w-full mb-2 bg-gray-100"
+              className="input input-bordered w-full mb-3 bg-gray-100"
             />
             <input
               type="email"
               value={user?.email || ""}
               readOnly
-              className="input input-bordered w-full mb-2 bg-gray-100"
+              className="input input-bordered w-full mb-3 bg-gray-100"
             />
 
             <input
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="input input-bordered w-full mb-2"
+              className="input input-bordered w-full mb-3"
               placeholder="Phone Number"
             />
             <textarea
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="textarea textarea-bordered w-full mb-3"
+              className="textarea textarea-bordered w-full mb-4"
               placeholder="Address"
             />
 
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <button
                 onClick={handleOrder}
-                className="flex-1 py-2 rounded-lg bg-purple-800 text-white font-semibold hover:bg-purple-900 transition"
+                className="flex-1 py-2 rounded-lg bg-purple-700 text-white font-semibold hover:bg-purple-800 transition"
               >
                 Place Order
               </button>
