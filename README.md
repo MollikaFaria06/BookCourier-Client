@@ -128,7 +128,6 @@ The purpose of BookCourier is to provide a modern, user-friendly digital library
 ## ⚡ Challenge Features
 
 - ❤️ Wishlist system
-- ⭐ Review & rating (only after order)
 - 🔍 Search & sort books
 - 🔐 JWT protected routes using Firebase token
 - ⚡ TanStack Query for data caching & revalidation
@@ -194,17 +193,18 @@ dotenv
 ### 🚀 How to Run Locally
 
 # Clone repo
-git clone https://github.com/your-username/bookcourier.git
+- git clone https://github.com/mollikafaria06/bookcourier.git
+- git clone https://github.com/mollikafaria06/bookcourier.git
 
 # Frontend
-cd client
-npm install
-npm run dev
+- cd bookCourierClient
+- npm install
+- npm run dev
 
 # Backend
-cd server
-npm install
-npm run start
+- cd bookCourierServer
+- npm install
+- npm run start
 
 ---
 
