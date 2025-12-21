@@ -1,16 +1,33 @@
-# React + Vite
+# BookCourier
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Purpose
+BookCourier is an online platform for book lovers to explore, order, and receive books with fast delivery. The website provides a seamless experience for browsing new arrivals, viewing book details, and subscribing to newsletters for promotions and updates.
 
-Currently, two official plugins are available:
+## Live URL
+[https://your-live-url.com](https://your-live-url.com)  <!-- Replace with your actual live link -->
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Key Features
+- **Latest Books Section**: Displays the newest books with a gradient heading and skeleton loaders while fetching data.
+- **All Books Page**: Full library view with search, sort by price, and skeleton loaders.
+- **Service Coverage Map**: Interactive Google Map showing cities served with request form for new cities.
+- **Why Choose Us**: Highlights key features like fast delivery, huge library, and easy returns.
+- **Reviews Section**: Reader testimonials with a stylish Swiper carousel and AOS animations.
+- **Newsletter Subscription**: Users can subscribe to updates with toast notifications for success/error.
+- **Responsive Design**: Optimized for desktop, tablet, and mobile screens.
+- **Animations**: Smooth fade-in effects using AOS for components on scroll.
 
-## React Compiler
+## NPM Packages Used
+- `react` & `react-dom` – Core React library.
+- `react-router-dom` – Client-side routing.
+- `axios` – For API requests.
+- `react-hot-toast` – Toast notifications.
+- `@tanstack/react-query` – Data fetching and caching.
+- `swiper` – Carousel/slider for reviews.
+- `aos` – Animate On Scroll library for fade-in effects.
+- `tailwindcss` – Utility-first CSS framework for styling.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/bookcourier.git
+   cd bookcourier

@@ -4,7 +4,7 @@ import LatestBooks from "../components/home/LatestBooks";
 import CoverageMap from "../components/home/CoverageMap";
 import WhyChoose from "../components/home/WhyChoose";
 import Reviews from "../components/home/Reviews";
-import Newsletter from "../components/home/Newsletter";
+import Newsletter from "../components/home/NewsLetter";
 
 const Home = () => {
       const reviewsPromise = fetch('/reviews.json').then(res => res.json());
@@ -19,7 +19,7 @@ const Home = () => {
           <CoverageMap />
           <WhyChoose />
           <Reviews reviewsOrPromise={reviewsPromise} />
-          <Newsletter />
+         <Newsletter/>
         </div>
       </main>
     </div>

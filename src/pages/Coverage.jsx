@@ -30,7 +30,6 @@ const Coverage = () => {
 
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-10 ">
-      {/* Beautiful Gradient Heading */}
       <h2 className="text-4xl sm:text-5xl font-extrabold text-center bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-500 text-transparent bg-clip-text mb-8">
         Explore Our Coverage Across 64+ Districts
       </h2>

@@ -110,7 +110,7 @@ const DashboardHome = () => {
 
   return (
     <div className="p-4">
-      {/* Beautiful Gradient Transparent Heading */}
+     
       <motion.h1
         className="text-4xl sm:text-5xl font-extrabold text-center mb-6 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-500 text-transparent bg-clip-text"
         initial={{ opacity: 0, y: -20 }}
@@ -139,6 +139,9 @@ const DashboardHome = () => {
             <motion.div className="bg-pink-600 hover:bg-pink-700 text-white p-6 rounded shadow text-center">
               <Link to="/dashboard/invoices">Invoices</Link>
             </motion.div>
+             <motion.div className="bg-red-500 hover:bg-red-600 text-white p-6 rounded shadow text-center">
+      <Link to="/dashboard/my-wishlist">My Wishlist ❤️</Link>
+    </motion.div>
             <motion.div className="bg-purple-600 hover:bg-purple-700 text-white p-6 rounded shadow text-center">
               <Link to="/dashboard/my-profile">My Profile</Link>
             </motion.div>

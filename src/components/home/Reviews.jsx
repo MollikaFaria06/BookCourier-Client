@@ -4,12 +4,18 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-coverflow";
 import ReviewCard from "./ReviewCard";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const Reviews = ({ reviewsOrPromise }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modules, setModules] = useState([]); 
   const [canAutoplay, setCanAutoplay] = useState(false);
+
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -91,9 +97,8 @@ const Reviews = ({ reviewsOrPromise }) => {
   }
 
   return (
-    <section className="my-24 px-4">
-      <div className="text-center mb-8 max-w-2xl mx-auto">
-        {/* Transparent Gradient & Meaningful Heading */}
+    <section className="my-24 px-4" data-aos="fade-up">
+      <div className="text-center mb-8 max-w-2xl mx-auto" data-aos="fade-up">
         <h3 className="text-3xl sm:text-4xl font-extrabold mb-2
                        bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400
                        text-transparent bg-clip-text">
@@ -136,7 +141,7 @@ const Reviews = ({ reviewsOrPromise }) => {
       >
         {reviews.map((r, i) => (
           <SwiperSlide key={r.id ?? i}>
-            <div className="px-3">
+            <div className="px-3" data-aos="fade-up" data-aos-delay={i * 150}>
               <ReviewCard review={r} />
             </div>
           </SwiperSlide>

@@ -6,7 +6,6 @@ const RoleRoute = ({ allowedRoles, children }) => {
 
   if (loading) return <p className="text-center mt-10">Checking role...</p>;
 
-  // If user role not allowed → go home
   if (!user || !allowedRoles.includes(user.role)) {
     return <Navigate to="/" replace />;
   }

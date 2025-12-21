@@ -31,7 +31,6 @@ const AllUsers = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      {/* Meaningful & Transparent Heading */}
       <h2
         className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-6 text-center
                    bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400

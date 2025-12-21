@@ -49,7 +49,6 @@ const MyBooks = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-      {/* Transparent Gradient Heading */}
       <h2
         className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-6 text-center
                    bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400

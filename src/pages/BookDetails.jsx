@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { getAuth } from "firebase/auth";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -30,6 +31,7 @@ const BookDetails = () => {
   if (!book)
     return <p className="text-center mt-10 text-gray-500">Book not found.</p>;
 
+  // ================= ORDER =================
   const handleOrder = async () => {
     if (!user) return Swal.fire("Error", "Please login first", "error");
     if (!phone || !address)
@@ -37,7 +39,8 @@ const BookDetails = () => {
 
     const auth = getAuth();
     const currentUser = auth.currentUser;
-    if (!currentUser) return Swal.fire("Error", "Firebase user not found", "error");
+    if (!currentUser)
+      return Swal.fire("Error", "Firebase user not found", "error");
 
     const token = await currentUser.getIdToken();
     const orderData = {
@@ -72,13 +75,41 @@ const BookDetails = () => {
     }
   };
 
+  // ================= WISHLIST =================
+  const handleWishlist = async () => {
+    if (!user) return Swal.fire("Error", "Please login first", "error");
+
+    try {
+      const auth = getAuth();
+      const token = await auth.currentUser.getIdToken();
+
+      const res = await axios.post(
+        "http://localhost:5000/wishlist",
+        { bookId: book._id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data.success) {
+        Swal.fire("Added!", "Book added to wishlist ❤️", "success");
+      }
+    } catch (err) {
+      Swal.fire(
+        "Oops!",
+        err.response?.data?.message || "Already in wishlist",
+        "warning"
+      );
+    }
+  };
+
   return (
     <>
-      {/* Gradient Card */}
       <div className="px-4 py-10 flex justify-center">
         <div className="w-full max-w-md sm:max-w-lg bg-gradient-to-br from-purple-700 via-pink-700 to-indigo-700 rounded-3xl shadow-2xl overflow-hidden">
           <div className="p-6 sm:p-8 text-white">
-            {/* Beautiful Gradient Heading */}
             <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-5 bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 text-transparent bg-clip-text">
               📚 Book Details
             </h1>
@@ -93,7 +124,10 @@ const BookDetails = () => {
             <p className="text-pink-200 mt-1">Author: {book.author}</p>
 
             <p className="mt-3 text-yellow-200">
-              Status: <span className="font-semibold capitalize">{book.status}</span>
+              Status:{" "}
+              <span className="font-semibold capitalize">
+                {book.status}
+              </span>
             </p>
 
             <p className="text-lg font-semibold mt-2 text-green-200">
@@ -105,7 +139,17 @@ const BookDetails = () => {
               className="mt-6 w-full py-3 rounded-xl bg-white text-purple-700 font-semibold hover:bg-purple-100 transition disabled:opacity-50"
               disabled={book.status !== "published"}
             >
-              {book.status === "published" ? "Order Now" : "Pending Order"}
+              {book.status === "published"
+                ? "Order Now"
+                : "Pending Order"}
+            </button>
+
+            {/* ❤️ Wishlist Button */}
+            <button
+              onClick={handleWishlist}
+              className="mt-3 w-full py-3 rounded-xl border border-white text-white font-semibold hover:bg-white hover:text-purple-700 transition"
+            >
+              ❤️ Add to Wishlist
             </button>
           </div>
         </div>

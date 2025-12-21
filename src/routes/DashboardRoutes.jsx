@@ -1,4 +1,3 @@
-// src/routes/DashboardRoutes.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import DashboardLayout from "../dashboard/DashboardLayout";
 import RoleRoute from "./RoleRoute";
@@ -9,6 +8,8 @@ import MyOrders from "../dashboard/user/MyOrders";
 import Invoices from "../dashboard/user/Invoices";
 import Payment from "../dashboard/user/Payment";
 import MyProfile from "../dashboard/shared/MyProfile";
+import MyWishlist from "../dashboard/user/MyWishlist";
+
 
 // Librarian
 import AddBook from "../dashboard/librarian/AddBook";
@@ -31,6 +32,8 @@ const DashboardRoutes = () => {
         <Route path="my-orders" element={<RoleRoute allowedRoles={["user"]}><MyOrders /></RoleRoute>} />
         <Route path="payment/:id" element={<RoleRoute allowedRoles={["user"]}><Payment /></RoleRoute>} />
         <Route path="invoices" element={<RoleRoute allowedRoles={["user"]}><Invoices /></RoleRoute>} />
+        <Route path="my-wishlist" element={<RoleRoute allowedRoles={["user"]}><MyWishlist /></RoleRoute>}/>
+
 
         {/* COMMON */}
         <Route path="my-profile" element={<MyProfile />} />

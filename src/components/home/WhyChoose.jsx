@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const features = [
   { title: "Fast Delivery", desc: "Same-day delivery in many cities.", icon: "🚚" },
@@ -7,10 +9,13 @@ const features = [
 ];
 
 const WhyChoose = () => {
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
+
   return (
     <section className="py-12">
-      <div className="text-center mb-12">
-        {/* Transparent Gradient Heading */}
+      <div className="text-center mb-12" data-aos="fade-up">
         <h2 className="text-3xl sm:text-4xl font-extrabold
                        bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400
                        text-transparent bg-clip-text mb-2">
@@ -25,8 +30,9 @@ const WhyChoose = () => {
         {features.map((f, i) => (
           <div
             key={f.title}
-            className="p-6 rounded-xl bg-primary  shadow-md transform transition-transform duration-500 hover:-translate-y-2"
-            style={{ animation: `fadeInUp .6s ${(i + 1) * 0.12}s both` }}
+            data-aos="fade-up"
+            data-aos-delay={i * 150}
+            className="p-6 rounded-xl bg-primary shadow-md transform transition-transform duration-500 hover:-translate-y-2"
           >
             <div className="text-4xl mb-3">{f.icon}</div>
             <h3 className="font-semibold text-white">{f.title}</h3>
@@ -34,13 +40,6 @@ const WhyChoose = () => {
           </div>
         ))}
       </div>
-
-      <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </section>
   );
 };

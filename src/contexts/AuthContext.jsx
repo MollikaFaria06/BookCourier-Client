@@ -149,7 +149,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Auth observer
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {

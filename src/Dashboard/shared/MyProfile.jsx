@@ -17,7 +17,6 @@ const MyProfile = () => {
     }
   }, [user]);
 
-  // ✅ Upload image to imgbb first
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -43,7 +42,7 @@ const MyProfile = () => {
       const data = await res.json();
 
       if (data.success) {
-        setPhoto(data.data.url); // ✅ permanent URL
+        setPhoto(data.data.url); 
         Swal.close();
       } else {
         throw new Error("Image upload failed");
@@ -54,7 +53,7 @@ const MyProfile = () => {
     }
   };
 
-  // ✅ Update Firebase profile with imgbb URL
+  //  Update Firebase profile with imgbb URL
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);

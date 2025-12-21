@@ -82,7 +82,6 @@ const MyOrders = () => {
 
   return (
     <div className="px-4 md:px-8 lg:px-16 py-8">
-      {/* Transparent Gradient Heading */}
       <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-6 text-center
                      bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400
                      text-transparent bg-clip-text">

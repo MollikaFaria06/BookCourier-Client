@@ -6,7 +6,6 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-r from-black to-purple-900 text-white mt-10 shadow-inner">
       <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
-        {/* Logo & Description */}
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
             <span className="font-bold text-2xl flex items-center">
@@ -26,7 +25,6 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Quick Links */}
         <div>
           <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
           <ul className="space-y-2 text-sm sm:text-base">
@@ -53,7 +51,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Contact Details */}
         <div>
           <h3 className="text-lg font-semibold mb-3">Contact Us</h3>
           <p className="text-sm sm:text-base">Email: fariamk007@gmail.com</p>
@@ -61,7 +58,6 @@ const Footer = () => {
           <p className="text-sm sm:text-base">Address: 123 Library St, Dhaka, Bangladesh</p>
         </div>
 
-        {/* Social Icons */}
         <div>
           <h3 className="text-lg font-semibold mb-3">Follow Us</h3>
           <div className="flex space-x-4 text-xl sm:text-2xl">
@@ -112,7 +108,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Copyright */}
       <div className="text-center py-4 text-sm border-t border-white/30">
         &copy; {new Date().getFullYear()} BookCourier. All rights reserved.
       </div>

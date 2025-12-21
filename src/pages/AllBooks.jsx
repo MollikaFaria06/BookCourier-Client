@@ -1,9 +1,9 @@
-
-
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const fetchBooks = async () => {
   const res = await axios.get("http://localhost:5000/books");
@@ -30,16 +30,17 @@ const AllBooks = () => {
 
   const filteredBooks = useMemo(() => {
     if (!books) return [];
-
     let result = books.filter((b) =>
       b.title.toLowerCase().includes(search.toLowerCase())
     );
-
     if (sort === "low") result = result.sort((a, b) => (a.price || 0) - (b.price || 0));
     if (sort === "high") result = result.sort((a, b) => (b.price || 0) - (a.price || 0));
-
     return result;
   }, [books, search, sort]);
+
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
 
   if (isLoading)
     return (
@@ -59,13 +60,20 @@ const AllBooks = () => {
 
   return (
     <div className="p-6">
-      {/* Beautiful Gradient Transparent Heading */}
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-center mt-5 mb-6 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-500 text-transparent bg-clip-text">
+      
+      <h1
+        className="text-4xl sm:text-5xl font-extrabold text-center mt-5 mb-6 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-500 text-transparent bg-clip-text"
+        data-aos="fade-up"
+      >
         📚 Explore All Books
       </h1>
 
       {/* Search & Sort Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-between items-center">
+      <div
+        className="flex flex-col sm:flex-row gap-4 mb-6 justify-between items-center"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
         <input
           type="text"
           placeholder="Search by book name..."
@@ -86,13 +94,21 @@ const AllBooks = () => {
       </div>
 
       {!filteredBooks.length ? (
-        <p className="text-center mt-10 text-gray-400 text-lg">No books found.</p>
+        <p
+          className="text-center mt-10 text-gray-400 text-lg"
+          data-aos="fade-up"
+          data-aos-delay="200"
+        >
+          No books found.
+        </p>
       ) : (
         <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredBooks.map((b) => (
+          {filteredBooks.map((b, idx) => (
             <div
               key={b._id}
               className="bg-white/10 rounded-lg overflow-hidden shadow-md p-3 hover:shadow-xl transition-shadow duration-300"
+              data-aos="fade-up"
+              data-aos-delay={100 + idx * 50}
             >
               <img
                 src={b.image || "https://via.placeholder.com/200x280"}

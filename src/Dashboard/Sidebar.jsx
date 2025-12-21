@@ -8,6 +8,7 @@ import {
   FaBook,
   FaUsers,
   FaCogs,
+  FaHeart,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -18,12 +19,16 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "My Orders", path: "/dashboard/my-orders", icon: <FaShoppingCart />, roles: ["user"] },
+    { name: "My Wishlist", path: "/dashboard/my-wishlist", icon: <FaHeart />, roles: ["user"] },
     { name: "Invoices", path: "/dashboard/invoices", icon: <FaFileInvoice />, roles: ["user"] },
+
     { name: "Add Book", path: "/dashboard/librarian/add-book", icon: <FaBook />, roles: ["librarian"] },
     { name: "My Books", path: "/dashboard/librarian/my-books", icon: <FaBook />, roles: ["librarian"] },
     { name: "Orders", path: "/dashboard/librarian/orders", icon: <FaShoppingCart />, roles: ["librarian"] },
+
     { name: "All Users", path: "/dashboard/admin/all-users", icon: <FaUsers />, roles: ["admin"] },
     { name: "Manage Books", path: "/dashboard/admin/manage-books", icon: <FaCogs />, roles: ["admin"] },
+
     { name: "My Profile", path: "/dashboard/my-profile", icon: <FaUser />, roles: ["user","librarian","admin"] },
   ];
 
@@ -60,7 +65,7 @@ const Sidebar = () => {
                       : "opacity-50 cursor-not-allowed"
                   }`
                 }
-                onClick={(e) => !hasAccess && e.preventDefault()} // unauthorized access blocked
+                onClick={(e) => !hasAccess && e.preventDefault()}
               >
                 {item.icon}
                 {item.name}

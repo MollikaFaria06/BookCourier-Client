@@ -14,13 +14,11 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     const root = document.documentElement;
 
-    // Set the data-theme attribute for DaisyUI
     root.setAttribute('data-theme', theme);
 
-    // Save to localStorage
     localStorage.setItem('theme', theme);
 
-    console.log('Theme changed to:', theme); // Optional: debug
+    console.log('Theme changed to:', theme); 
   }, [theme]);
 
   const toggleTheme = () => setTheme(prev => (prev === 'light' ? 'dark' : 'light'));

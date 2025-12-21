@@ -28,7 +28,7 @@ const Slider = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 4000); // 4 seconds
+    }, 4000); 
     return () => clearInterval(interval);
   }, []);
 
@@ -48,7 +48,6 @@ const Slider = () => {
                 backgroundPosition: "center",
               }}
             >
-              {/* Normal white overlay */}
               <div className="absolute inset-0 bg-black/40 flex items-center">
                 <div className="px-6 py-8 sm:py-12 max-w-2xl text-white">
                   <h3 className="text-xl sm:text-3xl font-bold">{s.title}</h3>
