@@ -211,7 +211,7 @@ dotenv
 
 ### 👨‍💻 Author
 
-- Faria Alam
-- Mern Stack Developer
-- 📧 fariamk007@gmail.com
-- 🔗 GitHub: https://github.com/mollikafaria06
+# Faria Alam
+# Mern Stack Developer
+# 📧 fariamk007@gmail.com
+# 🔗 GitHub: https://github.com/mollikafaria06
