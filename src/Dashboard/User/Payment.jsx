@@ -1,24 +1,34 @@
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { getAuth } from "firebase/auth";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Payment = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handlePay = async () => {
+    if (!user) {
+      Swal.fire("Error", "User not logged in", "error");
+      return;
+    }
+
     try {
-      const auth = getAuth();
-      const token = await auth.currentUser.getIdToken(true);
+      const token = await user.getIdToken?.() || localStorage.getItem("token");
+      const API_URL = import.meta.env.VITE_API_URL;
 
-      await axios.put(
-        `http://localhost:5000/users/pay/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
 
-      await Swal.fire({
+      const res = await axios.put(
+  `${API_URL}/users/pay/${id}`,
+  {},
+  { headers: { Authorization: `Bearer ${token}` } }
+);
+
+
+      console.log("Payment response:", res.data);
+
+      Swal.fire({
         icon: "success",
         title: "Payment Successful",
         text: "Your order has been paid successfully!",
@@ -27,39 +37,17 @@ const Payment = () => {
 
       navigate("/dashboard/my-orders");
     } catch (err) {
-      console.error(err);
+      console.error("Payment failed:", err.response?.data || err.message);
       Swal.fire({
         icon: "error",
         title: "Payment Failed",
-        text: "Something went wrong. Please try again.",
+        text: err.response?.data?.message || "Something went wrong. Please try again.",
         confirmButtonColor: "#ef4444",
       });
     }
   };
 
-  const handleCancel = async () => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to cancel this payment?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, cancel it!",
-      cancelButtonText: "No, go back",
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#6b7280",
-    });
-
-    if (result.isConfirmed) {
-      Swal.fire({
-        icon: "info",
-        title: "Payment Cancelled",
-        text: "You have cancelled the payment.",
-        confirmButtonColor: "#3b82f6",
-      });
-      navigate("/dashboard/my-orders");
-    }
-  };
-
+  // handleCancel stays same
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md p-10 rounded-2xl shadow-2xl bg-gradient-to-br from-purple-800 via-pink-800 to-indigo-800 text-white">
@@ -77,7 +65,7 @@ const Payment = () => {
             Confirm Payment
           </button>
           <button
-            onClick={handleCancel}
+            onClick={() => navigate("/dashboard/my-orders")}
             className="bg-red-500 hover:bg-red-600 transition-colors text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
           >
             Cancel

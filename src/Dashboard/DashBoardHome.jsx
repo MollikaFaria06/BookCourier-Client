@@ -45,7 +45,7 @@ const DashboardHome = () => {
 
     // Librarian Orders & Books Summary
     if (user.role === "librarian") {
-      fetch("http://localhost:5000/librarian/my-books", {
+      fetch("https://book-courier-server-hazel.vercel.app/librarian/my-books", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
@@ -53,7 +53,7 @@ const DashboardHome = () => {
           if (data.success) {
             setBooksData(data.books);
 
-            fetch("http://localhost:5000/librarian/orders", {
+            fetch("https://book-courier-server-hazel.vercel.app/librarian/orders", {
               headers: { Authorization: `Bearer ${token}` },
             })
               .then((res) => res.json())
@@ -72,7 +72,7 @@ const DashboardHome = () => {
 
     // Admin Summary
     if (user.role === "admin") {
-      fetch("http://localhost:5000/admin/users", {
+      fetch("https://book-courier-server-hazel.vercel.app/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
@@ -80,7 +80,7 @@ const DashboardHome = () => {
           if (data.success) setUsersCount(data.users.length);
         });
 
-      fetch("http://localhost:5000/admin/books", {
+      fetch("https://book-courier-server-hazel.vercel.app/admin/books", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
@@ -88,7 +88,7 @@ const DashboardHome = () => {
           if (data.success) setBooksData(data.books);
         });
 
-      fetch("http://localhost:5000/orders", {
+      fetch("https://book-courier-server-hazel.vercel.app/orders", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())

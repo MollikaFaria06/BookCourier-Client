@@ -19,7 +19,7 @@ const LatestBooks = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const res = await fetch("http://localhost:5000/books");
+        const res = await fetch("https://book-courier-server-hazel.vercel.app/books");
         const data = await res.json();
         if (data.success) {
           const latest = data.books

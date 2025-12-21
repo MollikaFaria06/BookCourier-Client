@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   GoogleAuthProvider,
@@ -12,30 +11,37 @@ import {
 import { auth } from "../firebase/firebase.config";
 import toast from "react-hot-toast";
 
+// Context + Hook
 export const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider = ({ children }) => {
+// Default export: AuthProvider (HMR safe)
+const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const adminEmails = ["admin@gmail.com"];
   const librarianEmails = ["librarian@gmail.com"];
 
-  // Firebase Email/Password register
-  const registerUser = (email, password) => {
+  // ================= Register =================
+  const registerUser = async (email, password) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      return result.user;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Update profile
+  // ================= Update Profile =================
   const updateUserProfile = async ({ displayName, photoURL }) => {
     if (!auth.currentUser) return;
     await updateProfile(auth.currentUser, { displayName, photoURL });
     setUser((prev) => ({ ...prev, name: displayName, photoURL }));
   };
 
-  // Firebase login (email/password only)
+  // ================= Login =================
   const login = async (email, password) => {
     setLoading(true);
     try {
@@ -46,19 +52,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Login with backend + Firebase token
+  // ================= Login with Backend =================
   const loginWithBackend = async (email, password) => {
     setLoading(true);
     try {
-      // Firebase login
       const result = await signInWithEmailAndPassword(auth, email, password);
       const firebaseUser = result.user;
 
-      // Get token & save in localStorage
       const token = await firebaseUser.getIdToken();
       localStorage.setItem("token", token);
 
-      // Backend call
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/firebase-login`, {
         method: "POST",
         headers: {
@@ -92,7 +95,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Google login
+  // ================= Google Login =================
   const signInGoogle = async () => {
     setLoading(true);
     try {
@@ -100,11 +103,9 @@ export const AuthProvider = ({ children }) => {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
-      // Get token & save
       const token = await firebaseUser.getIdToken();
       localStorage.setItem("token", token);
 
-      // Backend call
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/firebase-login`, {
         method: "POST",
         headers: {
@@ -137,18 +138,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout
+  // ================= Logout =================
   const logOut = async () => {
     setLoading(true);
     try {
       await signOut(auth);
       setUser(null);
-      localStorage.removeItem("token");
+      // localStorage.removeItem("token");
     } finally {
       setLoading(false);
     }
   };
 
+  // ================= Auth State Listener =================
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
@@ -156,14 +158,13 @@ export const AuthProvider = ({ children }) => {
         if (adminEmails.includes(firebaseUser.email)) role = "admin";
         else if (librarianEmails.includes(firebaseUser.email)) role = "librarian";
 
-        const appUser = {
+        setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           name: firebaseUser.displayName,
           photoURL: firebaseUser.photoURL,
           role,
-        };
-        setUser(appUser);
+        });
       } else {
         setUser(null);
       }
@@ -189,3 +190,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;

@@ -1,33 +1,76 @@
+// src/dashboard/admin/AllUsers.jsx
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import axios from "axios";
 
 const AllUsers = () => {
+  const { user } = useAuth();
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
+    if (!user) return;
+
     const token = localStorage.getItem("token");
+    if (!token) {
+      setError("No token found. Please login again.");
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
 
     axios
-      .get("http://localhost:5000/admin/users", {
+      .get(`${API_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setUsers(res.data.users || []))
-      .catch((err) => console.error(err));
-  }, []);
+      .then((res) => {
+        console.log("AllUsers API Response:", res.data); // ✅ Debug
+        // Fix: check if res.data.users exists, else use res.data directly
+        const usersData = res.data.users || res.data || [];
+        setUsers(usersData);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Fetch users error:", err.response?.data || err.message);
+        setError(err.response?.data?.message || "Failed to fetch users.");
+        setLoading(false);
+      });
+  }, [user, API_URL]);
 
   const changeRole = (id, role) => {
+    const token = localStorage.getItem("token");
     axios
       .patch(
-        `http://localhost:5000/admin/users/${id}/role`,
+        `${API_URL}/admin/users/${id}/role`,
         { role },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       )
       .then(() => {
         setUsers((prev) =>
           prev.map((u) => (u._id === id ? { ...u, role } : u))
         );
+      })
+      .catch((err) => {
+        console.error("Change role error:", err.response?.data || err.message);
+        alert("Failed to change role.");
       });
   };
+
+  if (loading)
+    return (
+      <div className="text-center py-6 text-gray-500 font-medium">
+        Loading...
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="text-center py-6 text-red-500 font-medium">{error}</div>
+    );
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -43,38 +86,24 @@ const AllUsers = () => {
         <table className="min-w-full bg-white text-gray-800">
           <thead className="bg-gradient-to-r from-purple-700 to-purple-900 text-white">
             <tr>
-              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">
-                Name
-              </th>
-              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">
-                Email
-              </th>
-              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">
-                Role
-              </th>
-              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">
-                Actions
-              </th>
+              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">Name</th>
+              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">Email</th>
+              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">Role</th>
+              <th className="py-2 sm:py-3 px-3 sm:px-6 text-left uppercase tracking-wider text-sm sm:text-base">Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.length > 0 ? (
               users.map((u, index) => (
                 <tr
-                  key={u._id}
+                  key={u._id || u.id || index}
                   className={`border-b hover:bg-gray-50 transition-colors ${
                     index % 2 === 0 ? "bg-gray-50" : "bg-white"
                   }`}
                 >
-                  <td className="py-2 sm:py-4 px-3 sm:px-6 font-medium text-sm sm:text-base">
-                    {u.name}
-                  </td>
-                  <td className="py-2 sm:py-4 px-3 sm:px-6 text-sm sm:text-base">
-                    {u.email}
-                  </td>
-                  <td className="py-2 sm:py-4 px-3 sm:px-6 capitalize text-sm sm:text-base">
-                    {u.role}
-                  </td>
+                  <td className="py-2 sm:py-4 px-3 sm:px-6 font-medium text-sm sm:text-base">{u.name}</td>
+                  <td className="py-2 sm:py-4 px-3 sm:px-6 text-sm sm:text-base">{u.email}</td>
+                  <td className="py-2 sm:py-4 px-3 sm:px-6 capitalize text-sm sm:text-base">{u.role}</td>
                   <td className="py-2 sm:py-4 px-3 sm:px-6 flex flex-wrap gap-2 text-sm sm:text-base">
                     {u.role !== "librarian" && (
                       <button

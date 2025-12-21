@@ -8,7 +8,7 @@ const ManageBooks = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/admin/books", {
+      .get("https://book-courier-server-hazel.vercel.app/admin/books", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => setBooks(res.data.books))
@@ -18,7 +18,7 @@ const ManageBooks = () => {
   const updateStatus = (id, status) => {
     axios
       .patch(
-        `http://localhost:5000/admin/books/${id}/status`,
+        `https://book-courier-server-hazel.vercel.app/admin/books/${id}/status`,
         { status },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -51,7 +51,7 @@ const ManageBooks = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`http://localhost:5000/admin/books/${id}`, {
+          .delete(`https://book-courier-server-hazel.vercel.app/admin/books/${id}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
           })
           .then(() => {

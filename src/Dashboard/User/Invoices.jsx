@@ -16,9 +16,12 @@ const Invoices = () => {
 
       try {
         const token = await firebaseUser.getIdToken();
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/users/invoices`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const API_URL = import.meta.env.VITE_API_URL;
+
+const res = await fetch(`${API_URL}/users/invoices`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+
         const data = await res.json();
         if (data.success) {
           setInvoices(data.invoices);

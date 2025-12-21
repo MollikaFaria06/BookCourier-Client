@@ -55,7 +55,7 @@ const AddBook = () => {
       localStorage.setItem("token", token);
 
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/books`,
+        `https://book-courier-server-hazel.vercel.app/books`,
         {
           title: book.title,
           author: book.author,

@@ -20,7 +20,7 @@ const MyBooks = () => {
     const fetchBooks = async () => {
       try {
         const token = await getToken();
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/librarian/my-books`, {
+        const res = await axios.get(`https://book-courier-server-hazel.vercel.app/librarian/my-books`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBooks(res.data.books);
@@ -35,7 +35,7 @@ const MyBooks = () => {
     try {
       const token = await getToken();
       await axios.patch(
-        `${import.meta.env.VITE_API_URL}/librarian/books/${id}`,
+        `https://book-courier-server-hazel.vercel.app/librarian/books/${id}`,
         { status: "unpublished" },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -10,10 +10,11 @@ The purpose of BookCourier is to provide a modern, user-friendly digital library
 
 ---
 
-## 🌐 Live Website
+## 🌐 Live URL
 
-🔗 https://your-live-site-url.com  
-*(Replace with your deployed URL)*
+- Frontend:  https://book-courier-server-hazel.vercel.app
+
+- Backend API: https://bookcourier-bd993.web.app
 
 ---
 
@@ -213,5 +214,5 @@ dotenv
 
 -  Faria Alam
 -  Mern Stack Developer
--  📧 fariamk007@gmail.com
+-  📧 Email:  fariamk007@gmail.com
 -  🔗 GitHub: https://github.com/mollikafaria06

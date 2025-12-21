@@ -18,7 +18,7 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       const token = await getToken();
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/librarian/orders`, {
+      const res = await axios.get(`https://book-courier-server-hazel.vercel.app/librarian/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data.orders);
@@ -40,7 +40,7 @@ const Orders = () => {
     const token = await getToken();
     try {
       await axios.patch(
-        `${import.meta.env.VITE_API_URL}/librarian/orders/${id}/status`,
+        `https://book-courier-server-hazel.vercel.app/librarian/orders/${id}/status`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -79,7 +79,7 @@ const Orders = () => {
     try {
       const token = await getToken();
       await axios.patch(
-        `${import.meta.env.VITE_API_URL}/librarian/orders/${id}/cancel`,
+        `https://book-courier-server-hazel.vercel.app/librarian/orders/${id}/cancel`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

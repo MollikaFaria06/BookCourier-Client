@@ -5,8 +5,13 @@ import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const fetchBooks = async () => {
-  const res = await axios.get("http://localhost:5000/books");
+  const token = localStorage.getItem("token");
+  const res = await axios.get(`${API_URL}/books`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
   if (!res.data.success) throw new Error("Failed to fetch books");
   return res.data.books;
 };
@@ -60,7 +65,6 @@ const AllBooks = () => {
 
   return (
     <div className="p-6">
-      
       <h1
         className="text-4xl sm:text-5xl font-extrabold text-center mt-5 mb-6 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-500 text-transparent bg-clip-text"
         data-aos="fade-up"

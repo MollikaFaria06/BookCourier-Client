@@ -13,7 +13,7 @@ const MyWishlist = () => {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken();
 
-      const res = await axios.get("http://localhost:5000/wishlist", {
+      const res = await axios.get("https://book-courier-server-hazel.vercel.app/wishlist", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -36,7 +36,7 @@ const MyWishlist = () => {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken();
 
-      await axios.delete(`http://localhost:5000/wishlist/${id}`, {
+      await axios.delete(`https://book-courier-server-hazel.vercel.app/wishlist/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -56,7 +56,7 @@ const MyWishlist = () => {
              bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400
              text-transparent bg-clip-text"
 >
-  ❤️ Books Close to My Heart
+   Books Close to My Heart ❤️
 </h2>
 
 

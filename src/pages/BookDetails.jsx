@@ -16,7 +16,7 @@ const BookDetails = () => {
 
   useEffect(() => {
     setFetching(true);
-    fetch(`http://localhost:5000/books/${id}`)
+    fetch(`https://book-courier-server-hazel.vercel.app/books/${id}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) setBook(data.book);
@@ -54,7 +54,7 @@ const BookDetails = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/orders", {
+      const res = await fetch("https://book-courier-server-hazel.vercel.app/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +84,7 @@ const BookDetails = () => {
       const token = await auth.currentUser.getIdToken();
 
       const res = await axios.post(
-        "http://localhost:5000/wishlist",
+        "https://book-courier-server-hazel.vercel.app/wishlist",
         { bookId: book._id },
         {
           headers: {

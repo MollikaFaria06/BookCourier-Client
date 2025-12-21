@@ -20,9 +20,12 @@ const MyOrders = () => {
 
       try {
         const token = await firebaseUser.getIdToken();
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/my-orders`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const API_URL = import.meta.env.VITE_API_URL;
+
+        const res = await axios.get(`${API_URL}/users/my-orders`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+
         setOrders(res.data.orders);
       } catch (err) {
         console.error("Failed to fetch orders:", err.response?.data || err.message);
@@ -54,7 +57,7 @@ const MyOrders = () => {
         const token = await firebaseUser.getIdToken();
 
         await axios.put(
-          `${import.meta.env.VITE_API_URL}/users/cancel/${orderId}`,
+          `https://book-courier-server-hazel.vercel.app/users/cancel/${orderId}`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
