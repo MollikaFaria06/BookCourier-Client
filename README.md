@@ -193,8 +193,8 @@ dotenv
 ### 🚀 How to Run Locally
 
 # Clone repo
-- git clone https://github.com/mollikafaria06/bookcourier.git
-- git clone https://github.com/mollikafaria06/bookcourier.git
+- git clone https://github.com/mollikafaria06/BookCourier-Server.git
+- git clone https://github.com/MollikaFaria06/BookCourier-Server.git
 
 # Frontend
 - cd bookCourierClient
@@ -211,7 +211,7 @@ dotenv
 
 ### 👨‍💻 Author
 
-Faria Alam
-Mern Stack Developer
-📧 fariamk007@gmail.com
-🔗 GitHub: https://github.com/mollikafaria06
+- Faria Alam
+- Mern Stack Developer
+- 📧 fariamk007@gmail.com
+- 🔗 GitHub: https://github.com/mollikafaria06
