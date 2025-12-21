@@ -1,33 +1,217 @@
-# BookCourier
+# 📚 BookCourier
 
-## Project Purpose
-BookCourier is an online platform for book lovers to explore, order, and receive books with fast delivery. The website provides a seamless experience for browsing new arrivals, viewing book details, and subscribing to newsletters for promotions and updates.
+**BookCourier** is a full-stack online book delivery and management platform where users can explore books, place orders, manage wishlists, and track deliveries — while librarians and admins handle inventory and orders through a powerful dashboard.
 
-## Live URL
-[https://your-live-url.com](https://your-live-url.com)  <!-- Replace with your actual live link -->
+---
 
-## Key Features
-- **Latest Books Section**: Displays the newest books with a gradient heading and skeleton loaders while fetching data.
-- **All Books Page**: Full library view with search, sort by price, and skeleton loaders.
-- **Service Coverage Map**: Interactive Google Map showing cities served with request form for new cities.
-- **Why Choose Us**: Highlights key features like fast delivery, huge library, and easy returns.
-- **Reviews Section**: Reader testimonials with a stylish Swiper carousel and AOS animations.
-- **Newsletter Subscription**: Users can subscribe to updates with toast notifications for success/error.
-- **Responsive Design**: Optimized for desktop, tablet, and mobile screens.
-- **Animations**: Smooth fade-in effects using AOS for components on scroll.
+## 🎯 Purpose
 
-## NPM Packages Used
-- `react` & `react-dom` – Core React library.
-- `react-router-dom` – Client-side routing.
-- `axios` – For API requests.
-- `react-hot-toast` – Toast notifications.
-- `@tanstack/react-query` – Data fetching and caching.
-- `swiper` – Carousel/slider for reviews.
-- `aos` – Animate On Scroll library for fade-in effects.
-- `tailwindcss` – Utility-first CSS framework for styling.
+The purpose of BookCourier is to provide a modern, user-friendly digital library and book delivery system that connects readers with librarians, enabling seamless browsing, ordering, and management of books with role-based dashboards.
 
-## Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/bookcourier.git
-   cd bookcourier
+---
+
+## 🌐 Live Website
+
+🔗 https://your-live-site-url.com  
+*(Replace with your deployed URL)*
+
+---
+
+## ✨ Key Features
+
+### 🧭 Layout & Navigation
+- Responsive **Navbar** with logo, links, user avatar & hamburger menu
+- **Theme toggle** (Light/Dark mode)
+- Modern **Footer** with quick links, contact info & social icons (new X logo)
+- Traditional layout: Navbar → Content → Footer
+- Responsive **Dashboard layout** with collapsible sidebar
+
+---
+
+### 🔐 Authentication System
+- Email & password login
+- Social login (Google)
+- Registration with:
+  - Name, Email, Password, Profile Image upload
+  - Strong password validation
+- Profile image updates on registration
+- Firebase authentication
+- JWT token verification for protected routes
+
+---
+
+### 🏠 Home Page
+- Banner with **3+ sliders** featuring books & CTA
+- 📚 **Latest Books** section (recently added)
+- 🗺️ **Coverage Map** of delivery cities
+- 💡 **Why Choose BookCourier** section
+- 🎞️ Newsletter Section
+- ➕ Review from Readers
+- Skeleton loaders for better UX
+
+---
+
+### 📖 All Books
+- Display all published books in card layout
+- Search books by name
+- Sort books by price (Low → High, High → Low)
+- Responsive grid with equal card sizes
+
+---
+
+### 📘 Book Details
+- Full book info page
+- ❤️ Add to Wishlist
+- 🛒 Order Now modal with:
+  - Name & Email (readonly)
+  - Phone & Address
+- Order saved with:
+  - Status: `pending`
+  - Payment: `unpaid`
+
+---
+
+## 👤 User Dashboard
+
+- 📦 **My Orders**
+  - View order list & status
+  - Cancel if pending
+  - Pay Now button for unpaid orders
+- 💳 **Invoices**
+  - Payment ID, amount & date
+- ❤️ **My Wishlist**
+  - View & remove wishlisted books
+- 🙍 **My Profile**
+  - Update name & profile image
+
+---
+
+## 📚 Librarian Dashboard
+
+- ➕ **Add Book**
+  - Name, image, author, price, status (published/unpublished)
+- 📖 **My Books**
+  - View & edit own books
+  - Unpublish books (cannot delete)
+- 🚚 **Orders**
+  - View orders of own books
+  - Change status: `pending → shipped → delivered`
+  - Cancel orders
+
+---
+
+## 🛡️ Admin Dashboard
+
+- 👥 **All Users**
+  - Promote users to Librarian/Admin
+- 🗂️ **Manage Books**
+  - Publish/unpublish
+  - Delete books (also removes related orders)
+- 🙍 **My Profile**
+  - Same as user profile page
+- 📊 Dashboard charts & stats
+
+---
+
+## 🎨 UI/UX Design Highlights
+
+- Unique, modern UI inspired by professional templates
+- Consistent heading styles across sections
+- Equal card sizes & grid layouts
+- Balanced spacing & alignment
+- Fully responsive (mobile, tablet, desktop)
+- Full-width dashboard with charts & profile section
+
+
+---
+
+## ⚡ Challenge Features
+
+- ❤️ Wishlist system
+- ⭐ Review & rating (only after order)
+- 🔍 Search & sort books
+- 🔐 JWT protected routes using Firebase token
+- ⚡ TanStack Query for data caching & revalidation
+
+---
+
+## 🧰 Tech Stack
+
+### Frontend
+- React
+- React Router DOM
+- Tailwind CSS
+- DaisyUI
+- Framer Motion
+- AOS
+- React Icons
+- Swiper.js
+- TanStack Query
+- SweetAlert2
+- React Hot Toast
+- Recharts
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+
+### Authentication & Hosting
+- Firebase Authentication
+- Firebase Token Verification
+- (Optional) Firebase / Vercel / Netlify for hosting
+
+---
+
+## 📦 NPM Packages Used
+
+```bash
+react
+react-router-dom
+firebase
+axios
+sweetalert2
+react-hot-toast
+aos
+framer-motion
+swiper
+@tanstack/react-query
+react-icons
+recharts
+express
+mongoose
+jsonwebtoken
+cors
+dotenv
+
+```
+
+---
+
+
+### 🚀 How to Run Locally
+
+# Clone repo
+git clone https://github.com/your-username/bookcourier.git
+
+# Frontend
+cd client
+npm install
+npm run dev
+
+# Backend
+cd server
+npm install
+npm run start
+
+---
+
+
+### 👨‍💻 Author
+
+Faria Alam
+Mern Stack Developer
+📧 fariamk007@gmail.com
+🔗 GitHub: https://github.com/mollikafaria06
