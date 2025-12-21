@@ -12,9 +12,9 @@ The purpose of BookCourier is to provide a modern, user-friendly digital library
 
 ## 🌐 Live URL
 
-- Frontend:  https://book-courier-server-hazel.vercel.app
+- Backend API:  https://book-courier-server-hazel.vercel.app
 
-- Backend API: https://bookcourier-bd993.web.app
+- Frontend:  https://bookcourier-bd993.web.app
 
 ---
 
