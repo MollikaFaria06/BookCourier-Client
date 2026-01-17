@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import Swal from "sweetalert2";
 import { FaEnvelope, FaUser, FaShieldAlt, FaClock } from "react-icons/fa";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const MyProfile = () => {
   const { user, updateUserProfile } = useAuth();
@@ -11,6 +13,8 @@ const MyProfile = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    AOS.init({ duration: 900, easing: "ease-in-out", once: true });
+
     if (user) {
       setName(user.name || "");
       setPhoto(user.photoURL || "");
@@ -42,7 +46,7 @@ const MyProfile = () => {
       const data = await res.json();
 
       if (data.success) {
-        setPhoto(data.data.url); 
+        setPhoto(data.data.url);
         Swal.close();
       } else {
         throw new Error("Image upload failed");
@@ -53,7 +57,6 @@ const MyProfile = () => {
     }
   };
 
-  //  Update Firebase profile with imgbb URL
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -93,7 +96,10 @@ const MyProfile = () => {
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
       {/* ================== User Info Section ================== */}
-      <div className="bg-yellow-500 rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 text-center">
+      <div
+        className="bg-yellow-500 rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 text-center"
+        data-aos="fade-up"
+      >
         <div className="flex flex-col items-center">
           <div className="relative">
             <img
@@ -116,7 +122,7 @@ const MyProfile = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
+          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3" data-aos="fade-up" data-aos-delay={100}>
             <div className="bg-teal-200 p-2 rounded-full text-teal-700">
               <FaEnvelope />
             </div>
@@ -126,7 +132,7 @@ const MyProfile = () => {
             </div>
           </div>
 
-          <div className="bg-yellow-100 rounded-lg shadow p-4 flex items-center gap-3">
+          <div className="bg-yellow-100 rounded-lg shadow p-4 flex items-center gap-3" data-aos="fade-up" data-aos-delay={200}>
             <div className="bg-yellow-300 p-2 rounded-full text-yellow-800">
               <FaUser />
             </div>
@@ -136,7 +142,7 @@ const MyProfile = () => {
             </div>
           </div>
 
-          <div className="bg-cyan-100 rounded-lg shadow p-4 flex items-center gap-3">
+          <div className="bg-cyan-100 rounded-lg shadow p-4 flex items-center gap-3" data-aos="fade-up" data-aos-delay={300}>
             <div className="bg-cyan-200 p-2 rounded-full text-cyan-700">
               <FaShieldAlt />
             </div>
@@ -146,7 +152,7 @@ const MyProfile = () => {
             </div>
           </div>
 
-          <div className="bg-orange-100 rounded-lg shadow p-4 flex items-center gap-3">
+          <div className="bg-orange-100 rounded-lg shadow p-4 flex items-center gap-3" data-aos="fade-up" data-aos-delay={400}>
             <div className="bg-orange-200 p-2 rounded-full text-orange-700">
               <FaClock />
             </div>
@@ -161,7 +167,7 @@ const MyProfile = () => {
       </div>
 
       {/* ================== Update Form ================== */}
-      <div className="bg-purple-800 rounded-xl shadow-lg p-6">
+      <div className="bg-purple-800 rounded-xl shadow-lg p-6" data-aos="fade-up" data-aos-delay={500}>
         <h3 className="text-2xl text-yellow-400 font-semibold mb-4">
           Update Profile
         </h3>

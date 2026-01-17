@@ -4,6 +4,8 @@ import { useAuth } from "../contexts/AuthContext";
 import { getAuth } from "firebase/auth";
 import Swal from "sweetalert2";
 import axios from "axios";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -15,6 +17,8 @@ const BookDetails = () => {
   const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
+    AOS.init({ duration: 900, easing: "ease-in-out", once: true });
+
     setFetching(true);
     fetch(`https://book-courier-server-hazel.vercel.app/books/${id}`)
       .then((res) => res.json())
@@ -54,14 +58,17 @@ const BookDetails = () => {
     };
 
     try {
-      const res = await fetch("https://book-courier-server-hazel.vercel.app/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(orderData),
-      });
+      const res = await fetch(
+        "https://book-courier-server-hazel.vercel.app/orders",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(orderData),
+        }
+      );
 
       if (!res.ok) throw new Error("Order failed");
 
@@ -106,48 +113,57 @@ const BookDetails = () => {
   };
 
   return (
-    <>
-      <div className="px-4 py-10 flex justify-center">
-        <div className="w-full max-w-md sm:max-w-lg bg-gradient-to-br from-purple-700 via-pink-700 to-indigo-700 rounded-3xl shadow-2xl overflow-hidden">
-          <div className="p-6 sm:p-8 text-white">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-5 bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 text-transparent bg-clip-text">
-              📚 Book Details
-            </h1>
+    <div className="max-w-6xl mx-auto px-4 py-16 space-y-16">
+      {/* ================= PAGE TITLE ================= */}
+      <h1
+        className="text-5xl sm:text-6xl font-extrabold text-center mb-12
+                   bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-pink-600 to-yellow-500"
+        data-aos="fade-down"
+      >
+        Book Details
+      </h1>
 
-            <img
-              src={book.image || "https://via.placeholder.com/400x300"}
-              alt={book.title}
-              className="w-full h-64 sm:h-72 object-cover rounded-xl mb-5 shadow-lg"
-            />
+      {/* ================= BOOK CARD ================= */}
+      <div
+        className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center"
+        data-aos="fade-up"
+      >
+        {/* Left: Book Image */}
+        <div>
+          <img
+            src={book.image || "https://via.placeholder.com/400x300"}
+            alt={book.title}
+            className="w-full h-72 sm:h-96 object-cover rounded-xl shadow-lg"
+          />
+        </div>
 
-            <h2 className="text-2xl sm:text-3xl font-bold">{book.title}</h2>
-            <p className="text-pink-200 mt-1">Author: {book.author}</p>
+        {/* Right: Book Info */}
+        <div className="space-y-4">
+          <h2 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-pink-600 to-yellow-500">
+            {book.title}
+          </h2>
+          <p className="text-gray-500 text-lg">
+            Author: <span className="font-semibold">{book.author}</span>
+          </p>
+          <p className="text-yellow-500 font-semibold">
+            Status: <span className="capitalize">{book.status}</span>
+          </p>
+          <p className="text-green-500 font-semibold text-xl">
+            Price: ${book.price?.toFixed(2) || "0.00"}
+          </p>
 
-            <p className="mt-3 text-yellow-200">
-              Status:{" "}
-              <span className="font-semibold capitalize">
-                {book.status}
-              </span>
-            </p>
-
-            <p className="text-lg font-semibold mt-2 text-green-200">
-              Price: ${book.price?.toFixed(2) || "0.00"}
-            </p>
-
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 mt-4">
             <button
               onClick={() => setShowModal(true)}
-              className="mt-6 w-full py-3 rounded-xl bg-white text-purple-700 font-semibold hover:bg-purple-100 transition disabled:opacity-50"
+              className="flex-1 py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition disabled:opacity-50"
               disabled={book.status !== "published"}
             >
-              {book.status === "published"
-                ? "Order Now"
-                : "Pending Order"}
+              {book.status === "published" ? "Order Now" : "Pending Order"}
             </button>
-
-            {/* ❤️ Wishlist Button */}
             <button
               onClick={handleWishlist}
-              className="mt-3 w-full py-3 rounded-xl border border-white text-white font-semibold hover:bg-white hover:text-purple-700 transition"
+              className="flex-1 py-3 rounded-xl border border-yellow-400 text-yellow-400 font-semibold hover:bg-yellow-400 hover:text-black transition"
             >
               ❤️ Add to Wishlist
             </button>
@@ -155,11 +171,11 @@ const BookDetails = () => {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* ================= ORDER MODAL ================= */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
-          <div className="bg-white text-black p-6 rounded-2xl w-full max-w-sm shadow-2xl">
-            <h3 className="text-2xl font-bold mb-5 text-center text-purple-700">
+          <div className="bg-gray-900 text-white p-6 rounded-2xl w-full max-w-sm shadow-2xl">
+            <h3 className="text-2xl font-bold mb-5 text-center text-yellow-400">
               Place Your Order
             </h3>
 
@@ -167,39 +183,39 @@ const BookDetails = () => {
               type="text"
               value={user?.name || ""}
               readOnly
-              className="input input-bordered w-full mb-3 bg-gray-100"
+              className="input input-bordered w-full mb-3 bg-gray-700 text-white"
             />
             <input
               type="email"
               value={user?.email || ""}
               readOnly
-              className="input input-bordered w-full mb-3 bg-gray-100"
+              className="input input-bordered w-full mb-3 bg-gray-700 text-white"
             />
 
             <input
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="input input-bordered w-full mb-3"
+              className="input input-bordered w-full mb-3 bg-gray-700 text-white"
               placeholder="Phone Number"
             />
             <textarea
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="textarea textarea-bordered w-full mb-4"
+              className="textarea textarea-bordered w-full mb-4 bg-gray-700 text-white"
               placeholder="Address"
             />
 
             <div className="flex gap-3">
               <button
                 onClick={handleOrder}
-                className="flex-1 py-2 rounded-lg bg-purple-700 text-white font-semibold hover:bg-purple-800 transition"
+                className="flex-1 py-2 rounded-lg bg-yellow-400 text-black font-semibold hover:bg-yellow-500 transition"
               >
                 Place Order
               </button>
               <button
                 onClick={() => setShowModal(false)}
-                className="flex-1 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+                className="flex-1 py-2 rounded-lg border border-gray-600 hover:bg-gray-700 transition"
               >
                 Cancel
               </button>
@@ -207,7 +223,7 @@ const BookDetails = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

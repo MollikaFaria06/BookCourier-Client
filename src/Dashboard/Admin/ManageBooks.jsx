@@ -2,11 +2,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const ManageBooks = () => {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
+    // Initialize AOS
+    AOS.init({ duration: 800, easing: "ease-in-out", once: true });
+
     axios
       .get("https://book-courier-server-hazel.vercel.app/admin/books", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -20,9 +25,7 @@ const ManageBooks = () => {
       .patch(
         `https://book-courier-server-hazel.vercel.app/admin/books/${id}/status`,
         { status },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       )
       .then(() => {
         setBooks((prev) =>
@@ -74,11 +77,15 @@ const ManageBooks = () => {
         className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 text-center
                    bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400
                    text-transparent bg-clip-text flex items-center justify-center gap-2"
+        data-aos="fade-down"
       >
         📚 Admin Panel: Manage Your Books
       </h2>
 
-      <div className="overflow-x-auto rounded-lg shadow border border-gray-200 bg-teal-800 text-white">
+      <div
+        className="overflow-x-auto rounded-lg shadow border border-gray-200 bg-teal-800 text-white"
+        data-aos="fade-up"
+      >
         <table className="min-w-full border border-gray-200 text-sm md:text-base">
           <thead className="bg-gradient-to-r from-purple-700 to-purple-900 text-white">
             <tr>
@@ -99,14 +106,10 @@ const ManageBooks = () => {
               </tr>
             ) : (
               books.map((b, index) => (
-                <tr
-                  key={b._id}
-                  className="hover:bg-pink-900 transition-colors"
-                >
+                <tr key={b._id} className="hover:bg-pink-900 transition-colors" data-aos="fade-up">
                   <td className="p-2 md:p-3 border">{index + 1}</td>
                   <td className="p-2 md:p-3 border font-medium">{b.title}</td>
                   <td className="p-2 md:p-3 border">{b.author}</td>
-
                   <td className="p-2 md:p-3 border text-center">
                     <span
                       className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-semibold ${
@@ -118,15 +121,12 @@ const ManageBooks = () => {
                       {b.status}
                     </span>
                   </td>
-
                   <td className="p-2 md:p-3 border text-center flex flex-wrap justify-center gap-2">
                     <button
                       onClick={() =>
                         updateStatus(
                           b._id,
-                          b.status === "published"
-                            ? "unpublished"
-                            : "published"
+                          b.status === "published" ? "unpublished" : "published"
                         )
                       }
                       className={`px-2 md:px-3 py-1 rounded text-white text-xs md:text-sm ${

@@ -28,7 +28,7 @@ const DashboardHome = () => {
 
     // User Orders Summary
     if (user.role === "user") {
-      fetch("http://localhost:5000/users/my-orders", {
+      fetch("https://book-courier-server-hazel.vercel.app/users/my-orders", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())

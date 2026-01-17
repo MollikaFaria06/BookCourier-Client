@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { auth } from "../../firebase/firebase.config";
 import toast from "react-hot-toast";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    AOS.init({ duration: 900, easing: "ease-in-out", once: true });
+
     const fetchInvoices = async () => {
       const firebaseUser = auth.currentUser;
       if (!firebaseUser) {
@@ -18,9 +22,9 @@ const Invoices = () => {
         const token = await firebaseUser.getIdToken();
         const API_URL = import.meta.env.VITE_API_URL;
 
-const res = await fetch(`${API_URL}/users/invoices`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
+        const res = await fetch(`${API_URL}/users/invoices`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         const data = await res.json();
         if (data.success) {
@@ -39,18 +43,26 @@ const res = await fetch(`${API_URL}/users/invoices`, {
     fetchInvoices();
   }, []);
 
-  if (loading) return <p className="text-center mt-10 text-gray-500">Loading invoices...</p>;
-  if (!invoices.length) return <p className="text-center mt-10 text-gray-500">No payments found.</p>;
+  if (loading)
+    return <p className="text-center mt-10 text-gray-500">Loading invoices...</p>;
+  if (!invoices.length)
+    return <p className="text-center mt-10 text-gray-500">No payments found.</p>;
 
   return (
     <div className="px-4 md:px-8 lg:px-16 py-10">
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-center mb-8
+      <h2
+        className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-center mb-8
                      bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400
-                     text-transparent bg-clip-text">
+                     text-transparent bg-clip-text"
+        data-aos="fade-down"
+      >
         💳 My Payments
       </h2>
 
-      <div className="overflow-x-auto rounded-lg shadow-lg border border-gray-200">
+      <div
+        className="overflow-x-auto rounded-lg shadow-lg border border-gray-200"
+        data-aos="fade-up"
+      >
         <table className="min-w-full bg-white text-gray-800">
           <thead className="bg-purple-700 text-white">
             <tr>
@@ -67,6 +79,8 @@ const res = await fetch(`${API_URL}/users/invoices`, {
                 className={`border-b hover:bg-purple-100 transition ${
                   idx % 2 === 0 ? "bg-gray-50" : "bg-white"
                 }`}
+                data-aos="fade-up"
+                data-aos-delay={idx * 100}
               >
                 <td className="py-2 px-3 sm:py-3 sm:px-4 font-mono text-sm sm:text-base text-gray-800">
                   {inv.paymentId}

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const MyOrders = () => {
   const navigate = useNavigate();
@@ -11,6 +13,8 @@ const MyOrders = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    AOS.init({ duration: 900, easing: "ease-in-out", once: true });
+
     const fetchOrders = async () => {
       const firebaseUser = auth.currentUser;
       if (!firebaseUser) {
@@ -23,8 +27,8 @@ const MyOrders = () => {
         const API_URL = import.meta.env.VITE_API_URL;
 
         const res = await axios.get(`${API_URL}/users/my-orders`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         setOrders(res.data.orders);
       } catch (err) {
@@ -40,14 +44,14 @@ const MyOrders = () => {
 
   const handleCancel = async (orderId) => {
     const confirm = await Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "Do you really want to cancel this order?",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, cancel it!',
-      cancelButtonText: 'No'
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, cancel it!",
+      cancelButtonText: "No",
     });
 
     if (confirm.isConfirmed) {
@@ -66,10 +70,10 @@ const MyOrders = () => {
           prev.map((o) => (o._id === orderId ? { ...o, status: "cancelled" } : o))
         );
 
-        Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success');
+        Swal.fire("Cancelled!", "Your order has been cancelled.", "success");
       } catch (err) {
         console.error(err);
-        Swal.fire('Error', 'Failed to cancel order.', 'error');
+        Swal.fire("Error", "Failed to cancel order.", "error");
       }
     }
   };
@@ -85,13 +89,21 @@ const MyOrders = () => {
 
   return (
     <div className="px-4 md:px-8 lg:px-16 py-8">
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-6 text-center
+      {/* Title */}
+      <h2
+        className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-6 text-center
                      bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400
-                     text-transparent bg-clip-text">
+                     text-transparent bg-clip-text"
+        data-aos="fade-down"
+      >
         📦 My Orders
       </h2>
 
-      <div className="overflow-x-auto rounded-lg shadow-lg border border-gray-200">
+      {/* Table */}
+      <div
+        className="overflow-x-auto rounded-lg shadow-lg border border-gray-200"
+        data-aos="fade-up"
+      >
         <table className="min-w-full bg-white text-gray-800">
           <thead className="bg-purple-700 text-white">
             <tr>
@@ -109,6 +121,8 @@ const MyOrders = () => {
                 className={`border-b hover:bg-purple-100 transition-colors ${
                   idx % 2 === 0 ? "bg-gray-50" : "bg-white"
                 }`}
+                data-aos="fade-up"
+                data-aos-delay={idx * 100}
               >
                 <td className="py-2 px-3 sm:py-3 sm:px-4 font-medium text-gray-800 text-sm sm:text-base">
                   {o.bookTitle}

@@ -5,6 +5,11 @@ import CoverageMap from "../components/home/CoverageMap";
 import WhyChoose from "../components/home/WhyChoose";
 import Reviews from "../components/home/Reviews";
 import Newsletter from "../components/home/NewsLetter";
+import FAQ from "../components/home/FAQ";
+import Blogs from "../components/home/Blogs";
+import Statistics from "../components/home/Statistics";
+import Services from "../components/home/Services";
+
 
 const Home = () => {
       const reviewsPromise = fetch('/reviews.json').then(res => res.json());
@@ -17,8 +22,12 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4">
           <LatestBooks />
           <CoverageMap />
+          <Blogs></Blogs>
           <WhyChoose />
           <Reviews reviewsOrPromise={reviewsPromise} />
+          <Statistics></Statistics>
+          <Services></Services>
+          <FAQ></FAQ>
          <Newsletter/>
         </div>
       </main>
